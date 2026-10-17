@@ -64,7 +64,7 @@
     </button>
   </div>
 
-  <!-- iOS (iPhone) O'RNATISH YO'RIQNOMASI -->
+  <!-- iOS O'RNATISH YO'RIQNOMASI -->
   <div id="iosModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl">
       <h3 class="font-bold text-base text-slate-900 mb-2">iPhone (iOS) ga o'rnatish</h3>
@@ -102,9 +102,8 @@
     </div>
   </div>
 
-  <!-- O'QITUVCHI BO'LIMI (Tugmasiz, 100% Avtomatik Budilnik va Radar) -->
+  <!-- O'QITUVCHI BO'LIMI -->
   <div id="teacherView" class="hidden min-h-screen flex flex-col justify-between p-4 max-w-md mx-auto">
-    <!-- Tepasi -->
     <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-200 flex items-center justify-between">
       <div class="pr-2">
         <p class="text-[11px] text-slate-400 font-semibold">O'qituvchi profili</p>
@@ -120,7 +119,6 @@
       </div>
     </div>
 
-    <!-- Markaziy Avto-Radar -->
     <div class="my-auto py-6 text-center space-y-5">
       <div id="tScheduleInfo" class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 text-xs sm:text-sm text-slate-600 leading-relaxed">
         Dars jadvali tekshirilmoqda...
@@ -133,20 +131,15 @@
       </div>
 
       <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-1">
-        <p id="tStatusText" class="text-sm font-bold text-slate-700">
-          Joylashuv aniqlanmoqda...
-        </p>
-        <p id="tSyncBadge" class="text-[11px] text-slate-400">
-          Darsga 5 daqiqa qolganda GPS avtomatik yonadi
-        </p>
+        <p id="tStatusText" class="text-sm font-bold text-slate-700">Joylashuv aniqlanmoqda...</p>
+        <p id="tSyncBadge" class="text-[11px] text-slate-400">Darsga 5 daqiqa qolganda GPS avtomatik yonadi</p>
       </div>
     </div>
 
-    <!-- Pastki ruxsat va batareya eslatmasi -->
     <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-3.5 text-[11px] text-indigo-900 space-y-1.5">
       <p class="font-bold">⚡ Avto-Budilnik va Fon rejimi yoqilgan</p>
       <p class="text-indigo-700 leading-normal">
-        Ilova darsingiz boshlanishiga 5 daqiqa qolganda avtomatik GPS ni yoqadi va oxirgi darsingiz tugaganda o'chiradi. Telefonda "Quvvatni tejash" yoqilgan bo'lsa, ilova uchun batareya cheklovini "Cheklovsiz" qilib qo'ying.
+        Ilova darsingiz boshlanishiga 5 daqiqa qolganda avtomatik GPS ni yoqadi va oxirgi darsingiz tugaganda o'chiradi.
       </p>
     </div>
   </div>
@@ -172,9 +165,8 @@
     </div>
   </div>
 
-  <!-- ADMIN VA CREATOR PANELI (Telefon va Noutbuk uchun 100% Moslashgan) -->
+  <!-- ADMIN VA CREATOR PANELI -->
   <div id="adminView" class="hidden min-h-screen flex flex-col safe-bottom sm:pb-6">
-    <!-- Yuqori Header -->
     <header class="bg-slate-900 text-white px-4 py-3 shadow-md sticky top-0 z-40">
       <div class="max-w-7xl mx-auto flex items-center justify-between">
         <div class="flex items-center gap-2.5">
@@ -185,7 +177,6 @@
           </div>
         </div>
 
-        <!-- Noutbuk uchun menyular (Telefonda yashirinadi, pastki menyuga o'tadi) -->
         <div class="hidden md:flex items-center gap-1.5">
           <button onclick="switchTab('live')" id="dtab_live" class="bg-indigo-600 text-white text-xs font-bold px-3 py-2 rounded-xl">📡 Jonli nazorat</button>
           <button onclick="switchTab('analytics')" id="dtab_analytics" class="bg-slate-800 text-slate-200 text-xs font-bold px-3 py-2 rounded-xl">📊 Tahlil</button>
@@ -201,7 +192,7 @@
       </div>
     </header>
 
-    <!-- TELEFON UCHUN PASTKI NAVIGATION BAR (Bottom Tab Bar) -->
+    <!-- TELEFON UCHUN PASTKI NAVIGATION BAR -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 flex items-center justify-around py-1.5 px-1 shadow-2xl">
       <button onclick="switchTab('live')" id="mtab_live" class="flex flex-col items-center justify-center py-1 px-2 rounded-xl text-indigo-600 font-bold text-[10px]">
         <span class="text-base">📡</span>
@@ -230,8 +221,6 @@
     </nav>
 
     <main class="max-w-7xl w-full mx-auto p-3 sm:p-6 flex-1 space-y-4">
-
-      <!-- 2-QURILMADAN KIRISH OGOHLANTIRISHLARI -->
       <div id="deviceAlertsBox" class="hidden bg-red-50 border-l-4 border-red-600 p-3.5 rounded-2xl shadow-sm">
         <div class="flex items-center justify-between mb-1.5">
           <h3 class="text-xs sm:text-sm font-extrabold text-red-800">⚠️ 2-qurilmadan kirish aniqlandi!</h3>
@@ -240,7 +229,7 @@
         <ul id="deviceAlertsList" class="text-xs text-red-700 space-y-1"></ul>
       </div>
 
-      <!-- 1. JONLI NAZORAT BO'LIMI -->
+      <!-- 1. JONLI NAZORAT -->
       <section id="sec_live" class="space-y-3">
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
@@ -256,10 +245,7 @@
             <div class="p-2 rounded-xl bg-blue-50 text-blue-800 border border-blue-200">🔵 Ruxsat: <b id="statExcused">0</b></div>
           </div>
         </div>
-
-        <!-- Telefonda Kartochkalar, Noutbukda Jadval -->
         <div id="liveMobileCards" class="md:hidden space-y-2.5"></div>
-
         <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
           <table class="w-full text-left border-collapse text-sm">
             <thead>
@@ -277,7 +263,7 @@
         </div>
       </section>
 
-      <!-- 2. DARS TAHLILI BO'LIMI -->
+      <!-- 2. DARS TAHLILI -->
       <section id="sec_analytics" class="hidden space-y-3">
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -289,10 +275,7 @@
             <button onclick="exportAnalyticsExcel()" class="bg-emerald-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl">📥 Excel</button>
           </div>
         </div>
-
-        <!-- Telefonda Kartochkalar, Noutbukda Jadval -->
         <div id="analyticsMobileCards" class="md:hidden space-y-2.5"></div>
-
         <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
           <table id="analyticsTableEl" class="w-full text-left border-collapse text-sm">
             <thead>
@@ -310,13 +293,13 @@
         </div>
       </section>
 
-      <!-- 3. DARS JADVALLARI (5 KUNLIK: Mobil uchun qulay bloklar + Noutbuk matritsa + Excel) -->
+      <!-- 3. DARS JADVALI -->
       <section id="sec_schedule" class="hidden space-y-3">
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h2 class="font-bold text-base sm:text-lg text-slate-800">5 Kunlik Dars Jadvali (1–8 soat)</h2>
-              <p class="text-xs text-slate-500">Qo'lda katakchalarni o'zgartiring yoki Excel (.xlsx) yuklang</p>
+              <p class="text-xs text-slate-500">Qo'lda o'zgartiring yoki Excel yuklang</p>
             </div>
             <div class="flex gap-2 w-full sm:w-auto">
               <label class="flex-1 sm:flex-none text-center bg-emerald-600 text-white text-xs font-bold px-3 py-2 rounded-xl cursor-pointer">
@@ -328,15 +311,9 @@
               </button>
             </div>
           </div>
-
-          <!-- Kunlar tugmalari -->
           <div class="flex gap-1.5 overflow-x-auto pb-1" id="dayTabs"></div>
         </div>
-
-        <!-- Telefonda: Har bir o'qituvchi uchun 2x4 soatlik qulay kartochka -->
         <div id="scheduleMobileCards" class="md:hidden space-y-2.5"></div>
-
-        <!-- Noutbukda: To'liq matritsa jadvali -->
         <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
           <table class="w-full text-left border-collapse text-xs sm:text-sm">
             <thead>
@@ -361,18 +338,14 @@
       <section id="sec_staff" class="hidden space-y-3">
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between gap-2">
           <div>
-            <h2 class="font-bold text-base sm:text-lg text-slate-800">Xodimlar (Login / Parol)</h2>
-            <p class="text-xs text-slate-500">Yangilangan parollar shu yerda ko'rinadi</p>
+            <h2 class="font-bold text-base sm:text-lg text-slate-800">Xodimlar (Login / Parol / Qurilma)</h2>
+            <p class="text-xs text-slate-500">O'qituvchining barcha qurilmalari va parollari</p>
           </div>
           <button onclick="openAddTeacherModal()" class="bg-indigo-600 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shrink-0">
             ➕ Qo'shish
           </button>
         </div>
-
-        <!-- Telefonda Kartochkalar -->
         <div id="staffMobileCards" class="md:hidden space-y-2.5"></div>
-
-        <!-- Noutbukda Jadval -->
         <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
           <table class="w-full text-left border-collapse text-sm">
             <thead>
@@ -381,7 +354,7 @@
                 <th class="p-3">O'qituvchi F.I.SH</th>
                 <th class="p-3">Login</th>
                 <th class="p-3">Joriy Parol</th>
-                <th class="p-3">Qurilma</th>
+                <th class="p-3">Qurilmalar tarixi</th>
                 <th class="p-3 text-right">Amal</th>
               </tr>
             </thead>
@@ -390,11 +363,11 @@
         </div>
       </section>
 
-      <!-- 5. KOORDINATA SOZLAMALARI -->
+      <!-- 5. KOORDINATALAR -->
       <section id="sec_geo" class="hidden space-y-3">
         <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 max-w-xl">
           <h2 class="font-bold text-base sm:text-lg text-slate-800 mb-1">Maktab Hududi Koordinatasi</h2>
-          <p class="text-xs text-slate-500 mb-4">Maktab markazi koordinatasi va radiusini kiriting.</p>
+          <p class="text-xs text-slate-500 mb-4">Maktab markazi va radiusini kiriting.</p>
           <div class="space-y-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
@@ -422,7 +395,7 @@
         </div>
       </section>
 
-      <!-- 6. CREATOR MAXSUS BO'LIMI -->
+      <!-- 6. CREATOR -->
       <section id="sec_creator" class="hidden space-y-3">
         <div class="bg-amber-50 border border-amber-300 p-5 rounded-2xl max-w-xl space-y-4">
           <div class="flex items-center gap-2">
@@ -453,7 +426,7 @@
     </main>
   </div>
 
-  <!-- RUXSAT BERISH MODALI -->
+  <!-- MODALLAR -->
   <div id="excuseModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-xl space-y-4">
       <div>
@@ -461,20 +434,14 @@
         <p id="excuseTeacherName" class="text-xs text-slate-500"></p>
       </div>
       <div class="grid grid-cols-2 gap-2">
-        <button onclick="applyExcuse('Kasal')" class="p-3 rounded-xl border border-amber-300 bg-amber-50 text-amber-900 font-bold text-xs">
-          🤒 Kasal
-        </button>
-        <button onclick="applyExcuse('Ruxsat etilgan')" class="p-3 rounded-xl border border-blue-300 bg-blue-50 text-blue-900 font-bold text-xs">
-          ✅ Ruxsat etilgan
-        </button>
+        <button onclick="applyExcuse('Kasal')" class="p-3 rounded-xl border border-amber-300 bg-amber-50 text-amber-900 font-bold text-xs">🤒 Kasal</button>
+        <button onclick="applyExcuse('Ruxsat etilgan')" class="p-3 rounded-xl border border-blue-300 bg-blue-50 text-blue-900 font-bold text-xs">✅ Ruxsat etilgan</button>
       </div>
       <div>
         <label class="block text-xs font-bold text-slate-600 mb-1">✍️ Qo'lda yozish:</label>
         <div class="flex gap-2">
           <input id="customExcuseInput" type="text" placeholder="Sababni yozing..." class="flex-1 border border-slate-300 rounded-xl px-3 py-2 text-xs" />
-          <button onclick="applyExcuse(document.getElementById('customExcuseInput').value || 'Ruxsat etilgan')" class="bg-indigo-600 text-white text-xs font-bold px-3 py-2 rounded-xl">
-            OK
-          </button>
+          <button onclick="applyExcuse(document.getElementById('customExcuseInput').value || 'Ruxsat etilgan')" class="bg-indigo-600 text-white text-xs font-bold px-3 py-2 rounded-xl">OK</button>
         </div>
       </div>
       <div class="flex justify-between pt-2 border-t">
@@ -484,7 +451,6 @@
     </div>
   </div>
 
-  <!-- YANGI O'QITUVCHI QO'SHISH MODALI -->
   <div id="addTeacherModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-xl space-y-3">
       <h3 class="font-bold text-base text-slate-900">Yangi o'qituvchi qo'shish</h3>
@@ -604,10 +570,43 @@
     function getDeviceId() {
       let id = localStorage.getItem("smart_davomat_device_id");
       if (!id) {
-        id = "DEV-" + Math.random().toString(36).substring(2, 10).toUpperCase() + "-" + Date.now().toString(36).toUpperCase();
+        id = "DEV-" + Math.random().toString(36).substring(2, 8).toUpperCase();
         localStorage.setItem("smart_davomat_device_id", id);
       }
       return id;
+    }
+
+    function getReadableDeviceName() {
+      const ua = navigator.userAgent;
+      let device = "Noma'lum qurilma";
+      let browser = "Brauzer";
+
+      if (ua.includes("Edg/")) browser = "Edge";
+      else if (ua.includes("OPR/") || ua.includes("Opera")) browser = "Opera";
+      else if (ua.includes("Chrome/")) browser = "Chrome";
+      else if (ua.includes("Safari/") && !ua.includes("Chrome")) browser = "Safari";
+      else if (ua.includes("Firefox/")) browser = "Firefox";
+
+      if (/android/i.test(ua)) {
+        const match = ua.match(/Android\s([0-9.]+);\s([^;)]+)/i);
+        if (match) {
+          device = `📱 ${match[2].replace("Build/", "").trim()} (Android ${match[1]})`;
+        } else {
+          device = "📱 Android Telefon";
+        }
+      } else if (/iPhone/i.test(ua)) {
+        const match = ua.match(/OS\s([0-9_]+)/i);
+        const ver = match ? match[1].replace(/_/g, ".") : "";
+        device = `🍎 iPhone (iOS ${ver})`;
+      } else if (/iPad/i.test(ua)) {
+        device = "🍎 iPad Planshet";
+      } else if (/Windows/i.test(ua)) {
+        device = "💻 Windows Kompyuter";
+      } else if (/Macintosh/i.test(ua)) {
+        device = "💻 MacBook / Mac";
+      }
+
+      return `${device} • ${browser}`;
     }
 
     async function initDatabaseSeed() {
@@ -616,7 +615,7 @@
         const tObj = {};
         const sObj = {};
         INITIAL_SEED.forEach(([login, name, daysMap]) => {
-          tObj[login] = { login, name, password: "12345", deviceId: "", deviceInfo: "" };
+          tObj[login] = { login, name, password: "12345", deviceId: "", deviceInfo: "", devices: {} };
           sObj[login] = {};
           DAYS_UZ.forEach(d => {
             sObj[login][d] = {};
@@ -696,13 +695,14 @@
         const entries = Object.values(alerts);
         if (entries.length > 0 && currentUser && (currentUser.role === "admin" || currentUser.role === "creator")) {
           box.classList.remove("hidden");
-          list.innerHTML = entries.map(a => `<li>• <b>${a.name}</b> (${a.login}) — ${a.time} da 2-qurilmadan kirdi!</li>`).join("");
+          list.innerHTML = entries.map(a => `<li>• <b>${a.name}</b> (${a.login}) — ${a.time} da yangi qurilmadan kirdi! (${a.device})</li>`).join("");
         } else {
           box.classList.add("hidden");
         }
       });
     }
 
+    // LOGIN FORMASI (Avto-eslab qolish va qurilmalar tarixi bilan)
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
       const login = document.getElementById("loginInput").value.trim();
@@ -712,34 +712,63 @@
 
       await initDatabaseSeed();
 
+      const rememberSession = (userObj) => {
+        localStorage.setItem("smart_davomat_session", JSON.stringify(userObj));
+        localStorage.setItem("smart_davomat_saved_login", login);
+        localStorage.setItem("smart_davomat_saved_pass", pass);
+      };
+
       if (login === systemCreds.creator.login && pass === systemCreds.creator.pass) {
         currentUser = { role: "creator", login, name: "Creator" };
+        rememberSession(currentUser);
         openAdminPanel("creator");
         return;
       }
 
       if (login === systemCreds.admin.login && pass === systemCreds.admin.pass) {
         currentUser = { role: "admin", login, name: "Administrator" };
+        rememberSession(currentUser);
         openAdminPanel("admin");
         return;
+      }
+
+      if (!teachersData[login]) {
+        const snap = await get(ref(db, `teacher_att_v1/teachers/${login}`));
+        if (snap.exists()) teachersData[login] = snap.val();
       }
 
       const t = teachersData[login];
       if (t && String(t.password) === String(pass)) {
         const myDevId = getDeviceId();
-        const ua = navigator.userAgent.slice(0, 45);
-        if (!t.deviceId) {
-          await update(ref(db, `teacher_att_v1/teachers/${login}`), { deviceId: myDevId, deviceInfo: ua });
-        } else if (t.deviceId !== myDevId) {
+        const devName = getReadableDeviceName();
+        const nowTime = getTodayDateStr() + " " + getNowHHMM();
+
+        const existingDevices = t.devices || {};
+        const existingIds = Object.keys(existingDevices);
+
+        if (existingIds.length > 0 && !existingDevices[myDevId]) {
           await push(ref(db, "teacher_att_v1/device_alerts"), {
             login,
             name: t.name,
-            time: getTodayDateStr() + " " + getNowHHMM(),
-            device: ua
+            time: nowTime,
+            device: `${devName} (Jami: ${existingIds.length + 1} ta qurilma)`
           });
         }
+
+        existingDevices[myDevId] = {
+          id: myDevId,
+          name: devName,
+          lastLogin: nowTime
+        };
+
+        await update(ref(db, `teacher_att_v1/teachers/${login}`), {
+          deviceId: existingIds[0] || myDevId,
+          deviceInfo: devName,
+          devices: existingDevices
+        });
+
         currentUser = { role: "teacher", login, name: t.name };
-        localStorage.setItem("saved_teacher_session", JSON.stringify(currentUser));
+        rememberSession(currentUser);
         openTeacherPanel();
         return;
       }
@@ -748,14 +777,12 @@
       errEl.classList.remove("hidden");
     });
 
-    // O'QITUVCHI PANELI VA AVTOMATIK BUDILNIK + RADAR TIZIMI
     function openTeacherPanel() {
       document.getElementById("loginView").classList.add("hidden");
       document.getElementById("adminView").classList.add("hidden");
       document.getElementById("teacherView").classList.remove("hidden");
       document.getElementById("tNameDisplay").textContent = currentUser.name;
 
-      // Ekranga birinchi tegishdayoq ovozsiz audio va WakeLock yoqiladi
       startSilentAudioLoop();
       document.body.addEventListener("touchstart", startSilentAudioLoop, { once: true });
       document.body.addEventListener("click", startSilentAudioLoop, { once: true });
@@ -768,7 +795,7 @@
       flushOfflineLogsToFirebase();
       evaluateTeacherAutoEngine();
       if (!trackingInterval) {
-        trackingInterval = setInterval(evaluateTeacherAutoEngine, 30000); // Har 30 soniyada budilnik va GPS ni tekshiradi
+        trackingInterval = setInterval(evaluateTeacherAutoEngine, 30000);
       }
     }
 
@@ -838,7 +865,6 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    // AVTOMATIK BUDILNIK VA GPS BOSHQARUVCHISI (Tugmasiz ishlaydi)
     let lastPingMinute = "";
     function evaluateTeacherAutoEngine() {
       if (!currentUser || currentUser.role !== "teacher") return;
@@ -847,7 +873,6 @@
       const nowMin = timeToMin(nowHHMM);
       const win = todayDay ? getTeacherActiveWindow(currentUser.login, todayDay) : null;
 
-      // Agar dars vaqtigacha hali 5 daqiqadan ko'p vaqt bo'lsa -> Kutish (Budilnik) rejimida turadi, lekin hozirgi holatni ham bir marta ko'rsatadi
       if (win && nowMin < timeToMin(win.wakeTime)) {
         document.getElementById("radarIcon").textContent = "🌙";
         document.getElementById("radarTitle").textContent = "KUTISH REJIMI";
@@ -864,7 +889,6 @@
         return;
       }
 
-      // Darsga 5 daqiqa qolgan paytda Push-bildirishnoma
       if (win && nowHHMM === win.wakeTime && !trackingActive) {
         trackingActive = true;
         if ("Notification" in window && Notification.permission === "granted") {
@@ -874,7 +898,6 @@
         }
       }
 
-      // Har daqiqada 1 marta GPS tekshiruvi
       if (nowHHMM === lastPingMinute) return;
       lastPingMinute = nowHHMM;
 
@@ -952,14 +975,12 @@
     }
     window.addEventListener("online", flushOfflineLogsToFirebase);
 
-    // TO'G'RILANGAN 3X FILTR: Maktabdan tashqarida bo'lsa DARHOL Tashqarida (0) deb ko'rsatadi!
     function applyThreeStrikeFilter(pingsObj) {
       const times = Object.keys(pingsObj || {}).sort();
       if (times.length === 0) {
         return { currentConfirmed: null, filteredTimeline: {}, lastTime: "—" };
       }
 
-      // Birinchi signal qanday bo'lsa (0 yoki 1), darhol o'shani oladi
       let confirmedState = Number(pingsObj[times[0]]);
       let streakCount = 0;
       const filteredTimeline = {};
@@ -984,7 +1005,6 @@
       };
     }
 
-    // ADMIN VA CREATOR PANELINI OCHISH
     function openAdminPanel(role) {
       document.getElementById("loginView").classList.add("hidden");
       document.getElementById("teacherView").classList.add("hidden");
@@ -1020,7 +1040,7 @@
       if (activeM && tab !== "creator") activeM.className = "flex flex-col items-center justify-center py-1 px-2 rounded-xl text-indigo-600 font-extrabold text-[10px] bg-indigo-50";
     };
 
-    // 1. JONLI NAZORAT (Mobil Kartochka + Noutbuk Jadval)
+    // 1. JONLI NAZORAT
     window.renderLiveDashboard = function () {
       const tbody = document.getElementById("liveTableBody");
       const mCards = document.getElementById("liveMobileCards");
@@ -1120,7 +1140,7 @@
       document.getElementById("excuseModal").classList.add("hidden");
     };
 
-    // 2. DARS TAHLILI (Mobil Kartochka + Noutbuk Jadval)
+    // 2. DARS TAHLILI
     window.renderAnalytics = async function () {
       const dateStr = document.getElementById("analyticsDate").value || getTodayDateStr();
       const dObj = new Date(dateStr);
@@ -1208,7 +1228,7 @@
       mCards.innerHTML = mobileCards.join("");
     };
 
-    // 3. DARS JADVALI (Mobil 2x4 Grid + Noutbuk Matritsa)
+    // 3. DARS JADVALI
     function renderDayTabs() {
       const container = document.getElementById("dayTabs");
       container.innerHTML = DAYS_UZ.map(d => `
@@ -1299,7 +1319,7 @@
           if (!login || !DAYS_UZ.includes(day)) return;
 
           if (!newTeachers[login]) {
-            newTeachers[login] = { login, name: name || login, password: "12345", deviceId: "", deviceInfo: "" };
+            newTeachers[login] = { login, name: name || login, password: "12345", deviceId: "", deviceInfo: "", devices: {} };
           }
           if (!newSchedules[login]) newSchedules[login] = {};
           if (!newSchedules[login][day]) newSchedules[login][day] = {};
@@ -1330,7 +1350,7 @@
       XLSX.writeFile(wb, "Oqituvchilar_Dars_Jadvali.xlsx");
     };
 
-    // 4. XODIMLAR (Mobil Kartochka + Noutbuk Jadval)
+    // 4. XODIMLAR (Qurilmalar tarixi va parollar bilan)
     function renderStaffTable() {
       const tbody = document.getElementById("staffTableBody");
       const mCards = document.getElementById("staffMobileCards");
@@ -1340,6 +1360,31 @@
       const mobileCards = [];
 
       Object.values(teachersData).forEach((t, idx) => {
+        const devList = Object.values(t.devices || {});
+        const devCount = devList.length;
+
+        let devHtml = `<span class="text-slate-400 text-xs">Hali kirmagan</span>`;
+        if (devCount === 1) {
+          devHtml = `
+            <div class="text-xs">
+              <span class="inline-block bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-md mb-1">🟢 1 ta qurilma</span>
+              <div class="text-slate-700 font-semibold">${devList[0].name}</div>
+              <div class="text-[10px] text-slate-400">Kirgan: ${devList[0].lastLogin}</div>
+            </div>
+          `;
+        } else if (devCount > 1) {
+          devHtml = `
+            <div class="text-xs space-y-1">
+              <span class="inline-block bg-red-100 text-red-700 font-extrabold px-2 py-0.5 rounded-md">⚠️ ${devCount} ta qurilma!</span>
+              ${devList.map((d, i) => `
+                <div class="p-1.5 rounded-lg ${i === 0 ? 'bg-slate-100 text-slate-700' : 'bg-red-50 text-red-800 border border-red-200'}">
+                  <b>${i + 1}.</b>${d.name} <span class="text-[10px] opacity-75">(${d.lastLogin})</span>
+                </div>
+              `).join("")}
+            </div>
+          `;
+        }
+
         desktopRows.push(`
           <tr class="hover:bg-slate-50">
             <td class="p-3 text-slate-400 font-semibold">${idx + 1}</td>
@@ -1347,20 +1392,24 @@
             <td class="p-3 font-mono text-indigo-700 font-bold">${t.login}</td>
             <td class="p-3">
               <input type="text" value="${t.password}" onchange="adminUpdatePass('${t.login}', this.value)"
-                class="border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-mono font-bold bg-amber-50 text-slate-900 w-32" />
+                class="border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-mono font-bold bg-amber-50 text-slate-900 w-28" />
             </td>
-            <td class="p-3 text-xs">${t.deviceId ? "📱 Bog'langan" : "—"}</td>
+            <td class="p-3">${devHtml}</td>
             <td class="p-3 text-right">
-              <button onclick="resetTeacherDevice('${t.login}')" class="text-xs bg-slate-100 px-2.5 py-1 rounded-lg font-semibold">Qurilmani yangilash</button>
+              <button onclick="resetTeacherDevice('${t.login}')" class="text-xs bg-slate-100 hover:bg-red-50 hover:text-red-600 px-3 py-1.5 rounded-xl font-bold">
+                🔄 Tozalash
+              </button>
             </td>
           </tr>
         `);
 
         mobileCards.push(`
-          <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-200 space-y-2">
+          <div class="bg-white p-3.5 rounded-2xl shadow-sm border ${devCount > 1 ? 'border-red-400 bg-red-50/20' : 'border-slate-200'} space-y-2.5">
             <div class="flex items-center justify-between">
               <p class="font-bold text-slate-900 text-sm">${t.name}</p>
-              <span class="text-[11px] font-bold ${t.deviceId ? 'text-emerald-600' : 'text-slate-400'}">${t.deviceId ? '📱 Qurilma faol' : 'Kirmagan'}</span>
+              <span class="text-[11px] font-bold px-2 py-0.5 rounded-md ${devCount > 1 ? 'bg-red-100 text-red-700' : devCount === 1 ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-400'}">
+                ${devCount > 0 ? `${devCount} ta qurilma` : 'Kirmagan'}
+              </span>
             </div>
             <div class="grid grid-cols-2 gap-2 text-xs">
               <div class="bg-slate-50 p-2 rounded-xl border">
@@ -1372,8 +1421,9 @@
                 <input type="text" value="${t.password}" onchange="adminUpdatePass('${t.login}', this.value)" class="w-full bg-transparent font-mono font-bold text-slate-900 focus:outline-none" />
               </div>
             </div>
-            <button onclick="resetTeacherDevice('${t.login}')" class="w-full py-2 bg-slate-100 rounded-xl text-xs font-bold text-slate-700">
-              🔄 Qurilma bog'lanishini tozalash
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200">${devHtml}</div>
+            <button onclick="resetTeacherDevice('${t.login}')" class="w-full py-2 bg-slate-100 active:bg-slate-200 rounded-xl text-xs font-bold text-slate-700">
+              🔄 Qurilmalar tarixini tozalash
             </button>
           </div>
         `);
@@ -1388,8 +1438,8 @@
     };
 
     window.resetTeacherDevice = async function (login) {
-      await update(ref(db, `teacher_att_v1/teachers/${login}`), { deviceId: "", deviceInfo: "" });
-      alert("Qurilma tozalandi!");
+      await update(ref(db, `teacher_att_v1/teachers/${login}`), { deviceId: "", deviceInfo: "", devices: null });
+      alert("✅ O'qituvchining barcha qurilmalari tarixi tozalandi!");
     };
 
     window.openAddTeacherModal = () => document.getElementById("addTeacherModal").classList.remove("hidden");
@@ -1399,7 +1449,7 @@
       const login = document.getElementById("newTLogin").value.trim();
       const password = document.getElementById("newTPass").value.trim() || "12345";
       if (!name || !login) return;
-      await update(ref(db, `teacher_att_v1/teachers/${login}`), { login, name, password, deviceId: "", deviceInfo: "" });
+      await update(ref(db, `teacher_att_v1/teachers/${login}`), { login, name, password, deviceId: "", deviceInfo: "", devices: {} });
       document.getElementById("addTeacherModal").classList.add("hidden");
     };
 
@@ -1413,6 +1463,7 @@
       const newP = document.getElementById("tModalNewPass").value.trim();
       if (!newP) return;
       await update(ref(db, `teacher_att_v1/teachers/${currentUser.login}`), { password: newP });
+      localStorage.setItem("smart_davomat_saved_pass", newP);
       document.getElementById("passModal").classList.add("hidden");
       alert("✅ Parolingiz yangilandi!");
     };
@@ -1438,7 +1489,7 @@
         creator: { login: document.getElementById("crSelfLogin").value.trim(), pass: document.getElementById("crSelfPass").value.trim() }
       };
       await update(ref(db, "teacher_att_v1/settings/creds"), newCreds);
-      alert("✅ Saqlandi!");
+      alert("✅ Parollar yangilandi!");
     };
 
     window.clearDeviceAlerts = async function () {
@@ -1452,7 +1503,8 @@
     };
 
     window.logout = function () {
-      localStorage.removeItem("saved_teacher_session");
+      if (!confirm("Profildan chiqishni xohlaysizmi?")) return;
+      localStorage.removeItem("smart_davomat_session");
       location.reload();
     };
 
@@ -1492,14 +1544,27 @@
       navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
     }
 
+    // DASTUR OCHILISHI BILAN AVTOMATIK SESSIONNI TIKLASH
     (async () => {
+      const savedSession = localStorage.getItem("smart_davomat_session");
+      if (savedSession) {
+        try {
+          currentUser = JSON.parse(savedSession);
+          if (currentUser.role === "teacher") {
+            openTeacherPanel();
+          } else if (currentUser.role === "admin" || currentUser.role === "creator") {
+            openAdminPanel(currentUser.role);
+          }
+        } catch (e) {}
+      } else {
+        const lastLogin = localStorage.getItem("smart_davomat_saved_login");
+        const lastPass = localStorage.getItem("smart_davomat_saved_pass");
+        if (lastLogin) document.getElementById("loginInput").value = lastLogin;
+        if (lastPass) document.getElementById("passwordInput").value = lastPass;
+      }
+
       await initDatabaseSeed();
       startRealtimeListeners();
-      const saved = localStorage.getItem("saved_teacher_session");
-      if (saved) {
-        currentUser = JSON.parse(saved);
-        openTeacherPanel();
-      }
     })();
   </script>
 </body>
