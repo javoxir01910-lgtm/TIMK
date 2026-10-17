@@ -8,9 +8,9 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Davomat" />
   <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" />
-  <title>Maktab O'qituvchilar Davomati</title>
-  
-  <!-- AVTOMATIK MANIFEST.JSON GENERATORI (Alohida fayl kerak emas!) -->
+  <title>Smart Davomat</title>
+
+  <!-- AVTOMATIK MANIFEST.JSON GENERATORI -->
   <script>
     (function() {
       const manifestData = {
@@ -19,7 +19,7 @@
         description: "O'qituvchilar uchun aqlli geolokatsiya davomat platformasi",
         start_url: window.location.href,
         display: "standalone",
-        background_color: "#f1f5f9",
+        background_color: "#f8fafc",
         theme_color: "#1e3a8a",
         orientation: "portrait-primary",
         icons: [
@@ -38,186 +38,236 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <style>
-    body { font-family: system-ui, -apple-system, sans-serif; background: #f1f5f9; }
-    .pulse-ring { animation: pulse 2s infinite; }
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6); }
-      70% { box-shadow: 0 0 0 22px rgba(34, 197, 94, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f1f5f9; -webkit-tap-highlight-color: transparent; }
+    .radar-ring { animation: radarPulse 2s infinite; }
+    @keyframes radarPulse {
+      0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.5); }
+      70% { box-shadow: 0 0 0 24px rgba(79, 70, 229, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
     }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+    .safe-bottom { padding-bottom: calc(4.5rem + env(safe-area-inset-bottom)); }
   </style>
 </head>
 <body class="min-h-screen text-slate-800">
 
-  <!-- PWA O'RNATISH BANNERI (Android va iOS uchun) -->
-  <div id="pwaBanner" class="hidden bg-indigo-900 text-white px-4 py-3 shadow-lg flex items-center justify-between sticky top-0 z-50">
+  <!-- PWA YUKLAB OLISH BANNERI -->
+  <div id="pwaBanner" class="hidden bg-indigo-950 text-white px-4 py-3 shadow-lg flex items-center justify-between sticky top-0 z-50">
     <div class="flex items-center gap-3">
-      <div class="bg-white/20 p-2 rounded-lg text-xl">📲</div>
+      <div class="bg-white/15 p-2 rounded-xl text-lg">📲</div>
       <div>
-        <p class="font-bold text-sm">Dasturni telefonga yuklab oling</p>
-        <p class="text-xs text-indigo-200">Barcha fayllar avtomatik birga o'rnatiladi</p>
+        <p class="font-bold text-xs sm:text-sm">Ilovani telefonga o'rnating</p>
+        <p class="text-[11px] text-indigo-200">Orqa fonda uzluksiz avto-nazorat uchun</p>
       </div>
     </div>
-    <button id="installBtn" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs px-4 py-2 rounded-lg shadow">
+    <button id="installBtn" class="bg-emerald-500 active:bg-emerald-600 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow">
       Yuklab olish
     </button>
   </div>
 
-  <!-- iOS (iPhone) UCHUN MAXSUS YO'RIQNOMA MODALI -->
+  <!-- iOS (iPhone) O'RNATISH YO'RIQNOMASI -->
   <div id="iosModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-end sm:items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl">
-      <h3 class="font-bold text-lg text-slate-900 mb-2">iPhone (iOS) ga o'rnatish</h3>
-      <ol class="text-sm text-slate-600 space-y-2 list-decimal pl-5 mb-4">
-        <li>Safari brauzerining pastki qismidagi <b>"Ulashish" (Share ⬆️)</b> tugmasini bosing.</li>
-        <li>Ro'yxatdan <b>"Asosiy ekranga qo'shish" (Add to Home Screen ➕)</b> bandini tanlang.</li>
+      <h3 class="font-bold text-base text-slate-900 mb-2">iPhone (iOS) ga o'rnatish</h3>
+      <ol class="text-xs sm:text-sm text-slate-600 space-y-2 list-decimal pl-5 mb-4">
+        <li>Safari pastidagi <b>"Ulashish" (Share ⬆️)</b> tugmasini bosing.</li>
+        <li><b>"Asosiy ekranga qo'shish" (Add to Home Screen ➕)</b> bandini tanlang.</li>
         <li>Yuqori o'ng burchakdagi <b>"Qo'shish" (Add)</b> tugmasini bosing.</li>
       </ol>
-      <button onclick="document.getElementById('iosModal').classList.add('hidden')" class="w-full bg-indigo-600 text-white font-semibold py-2.5 rounded-xl">Tushunarli</button>
+      <button onclick="document.getElementById('iosModal').classList.add('hidden')" class="w-full bg-indigo-600 text-white font-bold py-2.5 rounded-xl text-sm">Tushunarli</button>
     </div>
   </div>
 
-  <!-- LOGIN OYNASI (Yagona kirish: Creator, Admin va O'qituvchi uchun) -->
+  <!-- LOGIN OYNASI -->
   <div id="loginView" class="min-h-screen flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 sm:p-8 border border-slate-100">
+    <div class="bg-white rounded-3xl shadow-xl w-full max-w-sm p-6 border border-slate-100">
       <div class="text-center mb-6">
         <div class="w-16 h-16 bg-indigo-600 text-white rounded-2xl mx-auto flex items-center justify-center text-3xl shadow-md mb-3">🏫</div>
-        <h1 class="text-2xl font-extrabold text-slate-900">Smart Davomat</h1>
-        <p class="text-sm text-slate-500 mt-1">Tizimga kirish uchun login va parolingizni kiriting</p>
+        <h1 class="text-xl font-extrabold text-slate-900">Smart Davomat</h1>
+        <p class="text-xs text-slate-500 mt-1">Login va parolingizni kiriting</p>
       </div>
       <form id="loginForm" class="space-y-4">
         <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Login</label>
-          <input id="loginInput" type="text" required autocomplete="username" placeholder="Masalan: djurimbaev" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:outline-none text-sm" />
+          <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Login</label>
+          <input id="loginInput" type="text" required autocomplete="username" placeholder="Login" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:outline-none text-sm" />
         </div>
         <div>
-          <label class="block text-xs font-bold uppercase text-slate-500 mb-1">Parol</label>
+          <label class="block text-[11px] font-bold uppercase text-slate-500 mb-1">Parol</label>
           <input id="passwordInput" type="password" required autocomplete="current-password" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-600 focus:outline-none text-sm" />
         </div>
         <p id="loginError" class="text-xs text-red-600 font-semibold hidden"></p>
-        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition">
+        <button type="submit" class="w-full bg-indigo-600 active:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg text-sm">
           Tizimga kirish
         </button>
       </form>
     </div>
   </div>
 
-  <!-- O'QITUVCHI BO'LIMI -->
+  <!-- O'QITUVCHI BO'LIMI (Tugmasiz, 100% Avtomatik Budilnik va Radar) -->
   <div id="teacherView" class="hidden min-h-screen flex flex-col justify-between p-4 max-w-md mx-auto">
-    <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 flex items-center justify-between">
-      <div>
-        <p class="text-xs text-slate-400 font-medium">O'qituvchi</p>
-        <h2 id="tNameDisplay" class="font-bold text-slate-800 text-base leading-tight">...</h2>
+    <!-- Tepasi -->
+    <div class="bg-white rounded-2xl p-3.5 shadow-sm border border-slate-200 flex items-center justify-between">
+      <div class="pr-2">
+        <p class="text-[11px] text-slate-400 font-semibold">O'qituvchi profili</p>
+        <h2 id="tNameDisplay" class="font-bold text-slate-800 text-sm leading-snug">...</h2>
       </div>
-      <div class="flex items-center gap-2">
-        <button onclick="openPassModal()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-2 rounded-lg">
+      <div class="flex items-center gap-1.5 shrink-0">
+        <button onclick="openPassModal()" class="text-xs bg-slate-100 active:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl">
           🔑 Parol
         </button>
-        <button onclick="logout()" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 font-semibold px-3 py-2 rounded-lg">
+        <button onclick="logout()" class="text-xs bg-red-50 active:bg-red-100 text-red-600 font-bold px-3 py-2 rounded-xl">
           Chiqish
         </button>
       </div>
     </div>
 
-    <div class="my-auto py-8 text-center">
-      <div id="tScheduleInfo" class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 mb-6 text-sm text-slate-600">
-        Bugungi dars jadvalingiz yuklanmoqda...
+    <!-- Markaziy Avto-Radar -->
+    <div class="my-auto py-6 text-center space-y-5">
+      <div id="tScheduleInfo" class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 text-xs sm:text-sm text-slate-600 leading-relaxed">
+        Dars jadvali tekshirilmoqda...
       </div>
 
-      <button id="keldimBtn" onclick="startTeacherAttendance()" class="w-48 h-48 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-2xl shadow-2xl mx-auto flex flex-col items-center justify-center gap-2 transition transform active:scale-95">
-        <span class="text-4xl">📍</span>
-        <span id="keldimBtnText">KELDIM</span>
-      </button>
+      <div id="radarCircle" class="w-44 h-44 rounded-full bg-indigo-600 text-white mx-auto flex flex-col items-center justify-center p-4 shadow-2xl radar-ring transition">
+        <span id="radarIcon" class="text-4xl mb-1">📡</span>
+        <span id="radarTitle" class="font-extrabold text-base tracking-wide">AVTO-NAZORAT</span>
+        <span id="radarSub" class="text-[11px] text-indigo-100 mt-0.5">Faol holatda</span>
+      </div>
 
-      <p id="tStatusText" class="mt-6 text-sm font-semibold text-slate-600 px-4">
-        Maktabga kelganingizda "KELDIM" tugmasini bosing
-      </p>
-      <p id="tSyncBadge" class="mt-2 text-xs text-slate-400"></p>
+      <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-1">
+        <p id="tStatusText" class="text-sm font-bold text-slate-700">
+          Joylashuv aniqlanmoqda...
+        </p>
+        <p id="tSyncBadge" class="text-[11px] text-slate-400">
+          Darsga 5 daqiqa qolganda GPS avtomatik yonadi
+        </p>
+      </div>
     </div>
 
-    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 text-center">
-      ⚡ Dars vaqtida ilova uyqu rejimiga o'tmasligi uchun ovozsiz fon rejimi avtomatik ishlaydi. Maxfiylik: aniq koordinatangiz serverga saqlanmaydi.
+    <!-- Pastki ruxsat va batareya eslatmasi -->
+    <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-3.5 text-[11px] text-indigo-900 space-y-1.5">
+      <p class="font-bold">⚡ Avto-Budilnik va Fon rejimi yoqilgan</p>
+      <p class="text-indigo-700 leading-normal">
+        Ilova darsingiz boshlanishiga 5 daqiqa qolganda avtomatik GPS ni yoqadi va oxirgi darsingiz tugaganda o'chiradi. Telefonda "Quvvatni tejash" yoqilgan bo'lsa, ilova uchun batareya cheklovini "Cheklovsiz" qilib qo'ying.
+      </p>
     </div>
   </div>
 
   <!-- O'QITUVCHI PAROLNI O'ZGARTIRISH MODALI -->
-  <div id="passModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+  <div id="passModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-xl">
-      <h3 class="font-bold text-base text-slate-800 mb-3">Login va Parolni yangilash</h3>
+      <h3 class="font-bold text-base text-slate-800 mb-3">Parolni yangilash</h3>
       <div class="space-y-3">
         <div>
-          <label class="text-xs font-semibold text-slate-500">Login (o'zgarmaydi)</label>
-          <input id="tModalLogin" type="text" disabled class="w-full px-3 py-2 rounded-lg bg-slate-100 border text-sm text-slate-500" />
+          <label class="text-xs font-semibold text-slate-500">Login</label>
+          <input id="tModalLogin" type="text" disabled class="w-full px-3 py-2.5 rounded-xl bg-slate-100 border text-sm text-slate-500" />
         </div>
         <div>
           <label class="text-xs font-semibold text-slate-500">Yangi parol</label>
-          <input id="tModalNewPass" type="text" placeholder="Yangi parolni yozing" class="w-full px-3 py-2 rounded-lg border border-slate-300 text-sm" />
+          <input id="tModalNewPass" type="text" placeholder="Yangi parolni yozing" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 text-sm" />
         </div>
       </div>
       <div class="flex gap-2 mt-4">
-        <button onclick="document.getElementById('passModal').classList.add('hidden')" class="flex-1 py-2 rounded-lg bg-slate-100 text-slate-700 text-sm font-semibold">Bekor qilish</button>
-        <button onclick="saveTeacherPassword()" class="flex-1 py-2 rounded-lg bg-indigo-600 text-white text-sm font-semibold">Saqlash</button>
+        <button onclick="document.getElementById('passModal').classList.add('hidden')" class="flex-1 py-2.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold">Bekor qilish</button>
+        <button onclick="saveTeacherPassword()" class="flex-1 py-2.5 rounded-xl bg-indigo-600 text-white text-xs font-bold">Saqlash</button>
       </div>
     </div>
   </div>
 
-  <!-- ADMIN VA CREATOR PANELI -->
-  <div id="adminView" class="hidden min-h-screen flex flex-col">
+  <!-- ADMIN VA CREATOR PANELI (Telefon va Noutbuk uchun 100% Moslashgan) -->
+  <div id="adminView" class="hidden min-h-screen flex flex-col safe-bottom sm:pb-6">
+    <!-- Yuqori Header -->
     <header class="bg-slate-900 text-white px-4 py-3 shadow-md sticky top-0 z-40">
-      <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-        <div class="flex items-center gap-2">
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
           <span class="text-xl">🛡️</span>
           <div>
-            <h1 id="panelTitle" class="font-bold text-base leading-none">Boshqaruv Paneli</h1>
-            <span id="currentClock" class="text-xs text-slate-400"></span>
+            <h1 id="panelTitle" class="font-extrabold text-sm sm:text-base leading-none">Admin Panel</h1>
+            <span id="currentClock" class="text-[11px] text-slate-400 font-mono"></span>
           </div>
         </div>
-        <div class="flex items-center gap-2 overflow-x-auto py-1">
-          <button onclick="switchTab('live')" id="tab_live" class="tab-btn bg-indigo-600 text-white text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap">📡 Jonli nazorat</button>
-          <button onclick="switchTab('analytics')" id="tab_analytics" class="tab-btn bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap">📊 Dars Tahlili</button>
-          <button onclick="switchTab('schedule')" id="tab_schedule" class="tab-btn bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap">📅 Dars jadvallari (5 kun)</button>
-          <button onclick="switchTab('staff')" id="tab_staff" class="tab-btn bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap">👥 Xodimlar (Login/Parol)</button>
-          <button onclick="switchTab('geo')" id="tab_geo" class="tab-btn bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap">📍 Koordinata</button>
-          <button onclick="switchTab('creator')" id="tab_creator" class="tab-btn hidden bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap">👑 Creator Maxsus</button>
-          <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap">Chiqish</button>
+
+        <!-- Noutbuk uchun menyular (Telefonda yashirinadi, pastki menyuga o'tadi) -->
+        <div class="hidden md:flex items-center gap-1.5">
+          <button onclick="switchTab('live')" id="dtab_live" class="bg-indigo-600 text-white text-xs font-bold px-3 py-2 rounded-xl">📡 Jonli nazorat</button>
+          <button onclick="switchTab('analytics')" id="dtab_analytics" class="bg-slate-800 text-slate-200 text-xs font-bold px-3 py-2 rounded-xl">📊 Tahlil</button>
+          <button onclick="switchTab('schedule')" id="dtab_schedule" class="bg-slate-800 text-slate-200 text-xs font-bold px-3 py-2 rounded-xl">📅 Jadval (5 kun)</button>
+          <button onclick="switchTab('staff')" id="dtab_staff" class="bg-slate-800 text-slate-200 text-xs font-bold px-3 py-2 rounded-xl">👥 Xodimlar</button>
+          <button onclick="switchTab('geo')" id="dtab_geo" class="bg-slate-800 text-slate-200 text-xs font-bold px-3 py-2 rounded-xl">📍 Koordinata</button>
+          <button onclick="switchTab('creator')" id="dtab_creator" class="hidden bg-amber-600 text-white text-xs font-bold px-3 py-2 rounded-xl">👑 Creator</button>
         </div>
+
+        <button onclick="logout()" class="bg-red-600 active:bg-red-700 text-white text-xs font-bold px-3 py-2 rounded-xl">
+          Chiqish
+        </button>
       </div>
     </header>
 
-    <main class="max-w-7xl w-full mx-auto p-3 sm:p-6 flex-1 space-y-6">
+    <!-- TELEFON UCHUN PASTKI NAVIGATION BAR (Bottom Tab Bar) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 flex items-center justify-around py-1.5 px-1 shadow-2xl">
+      <button onclick="switchTab('live')" id="mtab_live" class="flex flex-col items-center justify-center py-1 px-2 rounded-xl text-indigo-600 font-bold text-[10px]">
+        <span class="text-base">📡</span>
+        <span>Jonli</span>
+      </button>
+      <button onclick="switchTab('analytics')" id="mtab_analytics" class="flex flex-col items-center justify-center py-1 px-2 rounded-xl text-slate-500 font-bold text-[10px]">
+        <span class="text-base">📊</span>
+        <span>Tahlil</span>
+      </button>
+      <button onclick="switchTab('schedule')" id="mtab_schedule" class="flex flex-col items-center justify-center py-1 px-2 rounded-xl text-slate-500 font-bold text-[10px]">
+        <span class="text-base">📅</span>
+        <span>Jadval</span>
+      </button>
+      <button onclick="switchTab('staff')" id="mtab_staff" class="flex flex-col items-center justify-center py-1 px-2 rounded-xl text-slate-500 font-bold text-[10px]">
+        <span class="text-base">👥</span>
+        <span>Xodimlar</span>
+      </button>
+      <button onclick="switchTab('geo')" id="mtab_geo" class="flex flex-col items-center justify-center py-1 px-2 rounded-xl text-slate-500 font-bold text-[10px]">
+        <span class="text-base">📍</span>
+        <span>Hudud</span>
+      </button>
+      <button onclick="switchTab('creator')" id="mtab_creator" class="hidden flex flex-col items-center justify-center py-1 px-2 rounded-xl text-amber-600 font-bold text-[10px]">
+        <span class="text-base">👑</span>
+        <span>Creator</span>
+      </button>
+    </nav>
+
+    <main class="max-w-7xl w-full mx-auto p-3 sm:p-6 flex-1 space-y-4">
 
       <!-- 2-QURILMADAN KIRISH OGOHLANTIRISHLARI -->
-      <div id="deviceAlertsBox" class="hidden bg-red-50 border-l-4 border-red-600 p-4 rounded-xl shadow-sm">
-        <div class="flex items-center justify-between mb-2">
-          <h3 class="text-sm font-extrabold text-red-800">⚠️ DIQQAT: Boshqa qurilmadan kirish holatlari aniqlandi!</h3>
-          <button onclick="clearDeviceAlerts()" class="text-xs text-red-700 underline font-semibold">Tozalash</button>
+      <div id="deviceAlertsBox" class="hidden bg-red-50 border-l-4 border-red-600 p-3.5 rounded-2xl shadow-sm">
+        <div class="flex items-center justify-between mb-1.5">
+          <h3 class="text-xs sm:text-sm font-extrabold text-red-800">⚠️ 2-qurilmadan kirish aniqlandi!</h3>
+          <button onclick="clearDeviceAlerts()" class="text-xs text-red-700 underline font-bold">Tozalash</button>
         </div>
         <ul id="deviceAlertsList" class="text-xs text-red-700 space-y-1"></ul>
       </div>
 
       <!-- 1. JONLI NAZORAT BO'LIMI -->
-      <section id="sec_live" class="space-y-4">
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 class="font-bold text-lg text-slate-800">Bugungi Jonli Nazorat</h2>
-            <p id="liveBellStatus" class="text-xs text-slate-500">Joriy dars soati hisoblanmoqda...</p>
+      <section id="sec_live" class="space-y-3">
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="font-bold text-base sm:text-lg text-slate-800">Jonli Nazorat</h2>
+              <p id="liveBellStatus" class="text-xs text-slate-500">...</p>
+            </div>
+            <input id="liveSearchInput" type="text" oninput="renderLiveDashboard()" placeholder="🔍 O'qituvchi qidirish..." class="w-full sm:w-56 border border-slate-300 rounded-xl px-3 py-2 text-xs" />
           </div>
-          <div class="flex flex-wrap gap-2 text-xs font-bold">
-            <span class="px-3 py-1.5 rounded-lg bg-emerald-100 text-emerald-800">🟢 Hududda: <b id="statIn">0</b></span>
-            <span class="px-3 py-1.5 rounded-lg bg-red-100 text-red-800">🔴 Tashqarida: <b id="statOut">0</b></span>
-            <span class="px-3 py-1.5 rounded-lg bg-blue-100 text-blue-800">🔵 Ruxsat etilgan: <b id="statExcused">0</b></span>
+          <div class="grid grid-cols-3 gap-2 text-center text-xs font-bold">
+            <div class="p-2 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200">🟢 Hududda: <b id="statIn">0</b></div>
+            <div class="p-2 rounded-xl bg-red-50 text-red-800 border border-red-200">🔴 Tashqarida: <b id="statOut">0</b></div>
+            <div class="p-2 rounded-xl bg-blue-50 text-blue-800 border border-blue-200">🔵 Ruxsat: <b id="statExcused">0</b></div>
           </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
+        <!-- Telefonda Kartochkalar, Noutbukda Jadval -->
+        <div id="liveMobileCards" class="md:hidden space-y-2.5"></div>
+
+        <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
           <table class="w-full text-left border-collapse text-sm">
             <thead>
               <tr class="bg-slate-100 text-slate-600 text-xs uppercase">
                 <th class="p-3">#</th>
                 <th class="p-3">O'qituvchi F.I.SH</th>
                 <th class="p-3">Bugungi dars oynasi</th>
-                <th class="p-3">Joriy holati (3x filtr)</th>
+                <th class="p-3">Joriy holati</th>
                 <th class="p-3">Oxirgi signal</th>
                 <th class="p-3 text-right">Kunlik Ruxsat</th>
               </tr>
@@ -227,29 +277,32 @@
         </div>
       </section>
 
-      <!-- 2. DARS TAHLILI -->
-      <section id="sec_analytics" class="hidden space-y-4">
+      <!-- 2. DARS TAHLILI BO'LIMI -->
+      <section id="sec_analytics" class="hidden space-y-3">
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h2 class="font-bold text-lg text-slate-800">Kunlik Dars va Daqiqalar Tahlili</h2>
-            <p class="text-xs text-slate-500">Har bir o'qituvchining 1-soatdan 8-soatgacha o'tgan va qoldirgan dars daqiqalari (12:35-13:20 tushlik hisobga olinmaydi)</p>
+            <h2 class="font-bold text-base sm:text-lg text-slate-800">Kunlik Dars va Daqiqalar Tahlili</h2>
+            <p class="text-xs text-slate-500">Qoldirilgan darslar va kechikilgan daqiqalar hisoboti</p>
           </div>
-          <div class="flex items-center gap-2">
-            <input type="date" id="analyticsDate" onchange="renderAnalytics()" class="border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-semibold" />
-            <button onclick="exportAnalyticsExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg">📥 Excel yuklab olish</button>
+          <div class="flex items-center gap-2 w-full sm:w-auto">
+            <input type="date" id="analyticsDate" onchange="renderAnalytics()" class="flex-1 sm:flex-none border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold" />
+            <button onclick="exportAnalyticsExcel()" class="bg-emerald-600 text-white text-xs font-bold px-3.5 py-2 rounded-xl">📥 Excel</button>
           </div>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs sm:text-sm">
+        <!-- Telefonda Kartochkalar, Noutbukda Jadval -->
+        <div id="analyticsMobileCards" class="md:hidden space-y-2.5"></div>
+
+        <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
+          <table id="analyticsTableEl" class="w-full text-left border-collapse text-sm">
             <thead>
               <tr class="bg-slate-100 text-slate-600 text-xs uppercase">
                 <th class="p-3">O'qituvchi</th>
-                <th class="p-3 text-center">Rejadagi dars</th>
+                <th class="p-3 text-center">Rejada</th>
                 <th class="p-3 text-center">To'liq o'tdi</th>
                 <th class="p-3 text-center">To'liq qoldirdi</th>
-                <th class="p-3 text-center">Qisman yo'qotilgan vaqt</th>
-                <th class="p-3">Soatlar kesimida tafsilot (1-8 soat)</th>
+                <th class="p-3 text-center">Qisman yo'qotildi</th>
+                <th class="p-3">Soatlar kesimida (1-8 soat)</th>
               </tr>
             </thead>
             <tbody id="analyticsTableBody" class="divide-y divide-slate-100"></tbody>
@@ -257,39 +310,46 @@
         </div>
       </section>
 
-      <!-- 3. DARS JADVALLARI BO'LIMI -->
-      <section id="sec_schedule" class="hidden space-y-4">
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 class="font-bold text-lg text-slate-800">5 Kunlik Dars Jadvallari (1-soatdan 8-soatgacha)</h2>
-            <p class="text-xs text-slate-500">Katakchani o'zgartirishingiz bilan avtomatik saqlanadi yoki tayyor Excel (.xlsx) faylni yuklang</p>
+      <!-- 3. DARS JADVALLARI (5 KUNLIK: Mobil uchun qulay bloklar + Noutbuk matritsa + Excel) -->
+      <section id="sec_schedule" class="hidden space-y-3">
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 class="font-bold text-base sm:text-lg text-slate-800">5 Kunlik Dars Jadvali (1–8 soat)</h2>
+              <p class="text-xs text-slate-500">Qo'lda katakchalarni o'zgartiring yoki Excel (.xlsx) yuklang</p>
+            </div>
+            <div class="flex gap-2 w-full sm:w-auto">
+              <label class="flex-1 sm:flex-none text-center bg-emerald-600 text-white text-xs font-bold px-3 py-2 rounded-xl cursor-pointer">
+                📂 Excel yuklash
+                <input type="file" id="excelUploadInput" accept=".xlsx,.xls" class="hidden" onchange="handleExcelUpload(event)" />
+              </label>
+              <button onclick="downloadScheduleExcel()" class="flex-1 sm:flex-none bg-slate-800 text-white text-xs font-bold px-3 py-2 rounded-xl">
+                ⬇️ Excel olish
+              </button>
+            </div>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <label class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg cursor-pointer">
-              📂 Excel (.xlsx) yuklash
-              <input type="file" id="excelUploadInput" accept=".xlsx,.xls" class="hidden" onchange="handleExcelUpload(event)" />
-            </label>
-            <button onclick="downloadScheduleExcel()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold px-3 py-2 rounded-lg">
-              ⬇️ Jadvalni Excelda olish
-            </button>
-          </div>
+
+          <!-- Kunlar tugmalari -->
+          <div class="flex gap-1.5 overflow-x-auto pb-1" id="dayTabs"></div>
         </div>
 
-        <div class="flex gap-2 overflow-x-auto pb-1" id="dayTabs"></div>
+        <!-- Telefonda: Har bir o'qituvchi uchun 2x4 soatlik qulay kartochka -->
+        <div id="scheduleMobileCards" class="md:hidden space-y-2.5"></div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
+        <!-- Noutbukda: To'liq matritsa jadvali -->
+        <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
           <table class="w-full text-left border-collapse text-xs sm:text-sm">
             <thead>
               <tr class="bg-slate-100 text-slate-700 uppercase text-xs">
                 <th class="p-3 sticky left-0 bg-slate-100 z-10 min-w-[220px]">O'qituvchi F.I.SH</th>
-                <th class="p-2 text-center">1-soat<br><span class="text-[10px] font-normal">08:30-09:15</span></th>
-                <th class="p-2 text-center">2-soat<br><span class="text-[10px] font-normal">09:20-10:05</span></th>
-                <th class="p-2 text-center">3-soat<br><span class="text-[10px] font-normal">10:10-10:55</span></th>
-                <th class="p-2 text-center">4-soat<br><span class="text-[10px] font-normal">11:00-11:45</span></th>
-                <th class="p-2 text-center">5-soat<br><span class="text-[10px] font-normal">11:50-12:35</span></th>
-                <th class="p-2 text-center">6-soat<br><span class="text-[10px] font-normal">13:20-14:05</span></th>
-                <th class="p-2 text-center">7-soat<br><span class="text-[10px] font-normal">14:10-14:55</span></th>
-                <th class="p-2 text-center">8-soat<br><span class="text-[10px] font-normal">15:00-15:45</span></th>
+                <th class="p-2 text-center">1-soat<br><span class="text-[10px] font-normal">08:30</span></th>
+                <th class="p-2 text-center">2-soat<br><span class="text-[10px] font-normal">09:20</span></th>
+                <th class="p-2 text-center">3-soat<br><span class="text-[10px] font-normal">10:10</span></th>
+                <th class="p-2 text-center">4-soat<br><span class="text-[10px] font-normal">11:00</span></th>
+                <th class="p-2 text-center">5-soat<br><span class="text-[10px] font-normal">11:50</span></th>
+                <th class="p-2 text-center">6-soat<br><span class="text-[10px] font-normal">13:20</span></th>
+                <th class="p-2 text-center">7-soat<br><span class="text-[10px] font-normal">14:10</span></th>
+                <th class="p-2 text-center">8-soat<br><span class="text-[10px] font-normal">15:00</span></th>
               </tr>
             </thead>
             <tbody id="scheduleMatrixBody" class="divide-y divide-slate-100"></tbody>
@@ -298,18 +358,22 @@
       </section>
 
       <!-- 4. XODIMLAR BO'LIMI -->
-      <section id="sec_staff" class="hidden space-y-4">
-        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+      <section id="sec_staff" class="hidden space-y-3">
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between gap-2">
           <div>
-            <h2 class="font-bold text-lg text-slate-800">Xodimlar Ro'yxati (Login va Parollar)</h2>
-            <p class="text-xs text-slate-500">O'qituvchi o'z parolini o'zgartirsa ham, yangilangan parol shu yerda ko'rinadi</p>
+            <h2 class="font-bold text-base sm:text-lg text-slate-800">Xodimlar (Login / Parol)</h2>
+            <p class="text-xs text-slate-500">Yangilangan parollar shu yerda ko'rinadi</p>
           </div>
-          <button onclick="openAddTeacherModal()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-4 py-2 rounded-lg">
-            ➕ Yangi o'qituvchi qo'shish
+          <button onclick="openAddTeacherModal()" class="bg-indigo-600 text-white text-xs font-bold px-3.5 py-2.5 rounded-xl shrink-0">
+            ➕ Qo'shish
           </button>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
+        <!-- Telefonda Kartochkalar -->
+        <div id="staffMobileCards" class="md:hidden space-y-2.5"></div>
+
+        <!-- Noutbukda Jadval -->
+        <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-x-auto">
           <table class="w-full text-left border-collapse text-sm">
             <thead>
               <tr class="bg-slate-100 text-slate-600 text-xs uppercase">
@@ -317,8 +381,8 @@
                 <th class="p-3">O'qituvchi F.I.SH</th>
                 <th class="p-3">Login</th>
                 <th class="p-3">Joriy Parol</th>
-                <th class="p-3">Bog'langan Qurilma</th>
-                <th class="p-3 text-right">Amallar</th>
+                <th class="p-3">Qurilma</th>
+                <th class="p-3 text-right">Amal</th>
               </tr>
             </thead>
             <tbody id="staffTableBody" class="divide-y divide-slate-100"></tbody>
@@ -326,31 +390,31 @@
         </div>
       </section>
 
-      <!-- 5. KOORDINATA BELGILASH BO'LIMI -->
-      <section id="sec_geo" class="hidden space-y-4">
-        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 max-w-xl">
-          <h2 class="font-bold text-lg text-slate-800 mb-1">Maktab Hududi Koordinatasi</h2>
-          <p class="text-xs text-slate-500 mb-4">Maktab markazi koordinatalari va ruxsat etilgan radiusni (metrda) kiriting.</p>
-          <div class="space-y-4">
+      <!-- 5. KOORDINATA SOZLAMALARI -->
+      <section id="sec_geo" class="hidden space-y-3">
+        <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 max-w-xl">
+          <h2 class="font-bold text-base sm:text-lg text-slate-800 mb-1">Maktab Hududi Koordinatasi</h2>
+          <p class="text-xs text-slate-500 mb-4">Maktab markazi koordinatasi va radiusini kiriting.</p>
+          <div class="space-y-3">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1">Kenglik (Latitude)</label>
-                <input id="geoLat" type="number" step="any" placeholder="Masalan: 42.4602" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm" />
+                <input id="geoLat" type="number" step="any" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm" />
               </div>
               <div>
                 <label class="block text-xs font-bold text-slate-600 mb-1">Uzunlik (Longitude)</label>
-                <input id="geoLng" type="number" step="any" placeholder="Masalan: 59.6156" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm" />
+                <input id="geoLng" type="number" step="any" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm" />
               </div>
             </div>
             <div>
               <label class="block text-xs font-bold text-slate-600 mb-1">Ruxsat etilgan radius (metrda)</label>
-              <input id="geoRadius" type="number" placeholder="120" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm" />
+              <input id="geoRadius" type="number" class="w-full border border-slate-300 rounded-xl px-3 py-2.5 text-sm" />
             </div>
-            <div class="flex flex-wrap gap-2 pt-2">
-              <button onclick="fillCurrentLocation()" type="button" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold px-4 py-2.5 rounded-xl">
-                📍 Hozirgi turgan joyimni olish
+            <div class="flex flex-col sm:flex-row gap-2 pt-2">
+              <button onclick="fillCurrentLocation()" type="button" class="flex-1 bg-slate-100 active:bg-slate-200 text-slate-800 text-xs font-bold py-3 rounded-xl">
+                📍 Hozirgi joylashuvni olish
               </button>
-              <button onclick="saveGeoSettings()" type="button" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold px-5 py-2.5 rounded-xl">
+              <button onclick="saveGeoSettings()" type="button" class="flex-1 bg-indigo-600 active:bg-indigo-700 text-white text-xs font-bold py-3 rounded-xl">
                 💾 Koordinatani saqlash
               </button>
             </div>
@@ -359,39 +423,27 @@
       </section>
 
       <!-- 6. CREATOR MAXSUS BO'LIMI -->
-      <section id="sec_creator" class="hidden space-y-4">
-        <div class="bg-amber-50 border border-amber-300 p-6 rounded-2xl max-w-xl space-y-4">
+      <section id="sec_creator" class="hidden space-y-3">
+        <div class="bg-amber-50 border border-amber-300 p-5 rounded-2xl max-w-xl space-y-4">
           <div class="flex items-center gap-2">
             <span class="text-2xl">👑</span>
             <div>
-              <h2 class="font-extrabold text-lg text-amber-900">Creator Yashirin Boshqaruvi</h2>
-              <p class="text-xs text-amber-700">Bu bo'lim mavjudligi Admin va O'qituvchilarga umuman ko'rinmaydi</p>
+              <h2 class="font-extrabold text-base text-amber-900">Creator Yashirin Boshqaruvi</h2>
+              <p class="text-xs text-amber-700">Admin va O'qituvchilarga ko'rinmaydi</p>
             </div>
           </div>
           <div class="bg-white p-4 rounded-xl border border-amber-200 space-y-3">
-            <h3 class="font-bold text-sm text-slate-800">Admin login va parolini boshqarish</h3>
+            <h3 class="font-bold text-xs uppercase text-slate-500">Admin login va paroli</h3>
             <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="text-xs text-slate-500">Admin Login</label>
-                <input id="crAdminLogin" type="text" class="w-full border rounded-lg px-3 py-2 text-sm" />
-              </div>
-              <div>
-                <label class="text-xs text-slate-500">Admin Parol</label>
-                <input id="crAdminPass" type="text" class="w-full border rounded-lg px-3 py-2 text-sm" />
-              </div>
+              <input id="crAdminLogin" type="text" placeholder="Admin Login" class="w-full border rounded-xl px-3 py-2 text-sm" />
+              <input id="crAdminPass" type="text" placeholder="Admin Parol" class="w-full border rounded-xl px-3 py-2 text-sm" />
             </div>
-            <h3 class="font-bold text-sm text-slate-800 pt-2">Creator shaxsiy login va paroli</h3>
+            <h3 class="font-bold text-xs uppercase text-slate-500 pt-2">Creator login va paroli</h3>
             <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="text-xs text-slate-500">Creator Login</label>
-                <input id="crSelfLogin" type="text" class="w-full border rounded-lg px-3 py-2 text-sm" />
-              </div>
-              <div>
-                <label class="text-xs text-slate-500">Creator Parol</label>
-                <input id="crSelfPass" type="text" class="w-full border rounded-lg px-3 py-2 text-sm" />
-              </div>
+              <input id="crSelfLogin" type="text" placeholder="Creator Login" class="w-full border rounded-xl px-3 py-2 text-sm" />
+              <input id="crSelfPass" type="text" placeholder="Creator Parol" class="w-full border rounded-xl px-3 py-2 text-sm" />
             </div>
-            <button onclick="saveCreatorCredentials()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs py-2.5 rounded-xl">
+            <button onclick="saveCreatorCredentials()" class="w-full bg-amber-600 text-white font-bold text-xs py-3 rounded-xl">
               Saqlash
             </button>
           </div>
@@ -402,51 +454,51 @@
   </div>
 
   <!-- RUXSAT BERISH MODALI -->
-  <div id="excuseModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+  <div id="excuseModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-xl space-y-4">
       <div>
         <h3 class="font-bold text-base text-slate-900">Bir kunlik ruxsat berish</h3>
         <p id="excuseTeacherName" class="text-xs text-slate-500"></p>
       </div>
       <div class="grid grid-cols-2 gap-2">
-        <button onclick="applyExcuse('Kasal')" class="p-3 rounded-xl border border-amber-300 bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold text-xs">
+        <button onclick="applyExcuse('Kasal')" class="p-3 rounded-xl border border-amber-300 bg-amber-50 text-amber-900 font-bold text-xs">
           🤒 Kasal
         </button>
-        <button onclick="applyExcuse('Ruxsat etilgan')" class="p-3 rounded-xl border border-blue-300 bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold text-xs">
+        <button onclick="applyExcuse('Ruxsat etilgan')" class="p-3 rounded-xl border border-blue-300 bg-blue-50 text-blue-900 font-bold text-xs">
           ✅ Ruxsat etilgan
         </button>
       </div>
       <div>
-        <label class="block text-xs font-bold text-slate-600 mb-1">✍️ Qo'lda sabab yozish (ixtiyoriy):</label>
+        <label class="block text-xs font-bold text-slate-600 mb-1">✍️ Qo'lda yozish:</label>
         <div class="flex gap-2">
-          <input id="customExcuseInput" type="text" placeholder="Masalan: RayONOga yuborildi" class="flex-1 border border-slate-300 rounded-xl px-3 py-2 text-xs" />
+          <input id="customExcuseInput" type="text" placeholder="Sababni yozing..." class="flex-1 border border-slate-300 rounded-xl px-3 py-2 text-xs" />
           <button onclick="applyExcuse(document.getElementById('customExcuseInput').value || 'Ruxsat etilgan')" class="bg-indigo-600 text-white text-xs font-bold px-3 py-2 rounded-xl">
-            Tasdiqlash
+            OK
           </button>
         </div>
       </div>
       <div class="flex justify-between pt-2 border-t">
-        <button onclick="removeExcuse()" class="text-xs text-red-600 font-semibold">Ruxsatni bekor qilish</button>
-        <button onclick="document.getElementById('excuseModal').classList.add('hidden')" class="text-xs text-slate-500 font-semibold">Yopish</button>
+        <button onclick="removeExcuse()" class="text-xs text-red-600 font-bold">Ruxsatni o'chirish</button>
+        <button onclick="document.getElementById('excuseModal').classList.add('hidden')" class="text-xs text-slate-500 font-bold">Yopish</button>
       </div>
     </div>
   </div>
 
   <!-- YANGI O'QITUVCHI QO'SHISH MODALI -->
-  <div id="addTeacherModal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+  <div id="addTeacherModal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-xl space-y-3">
       <h3 class="font-bold text-base text-slate-900">Yangi o'qituvchi qo'shish</h3>
-      <input id="newTName" type="text" placeholder="F.I.SH (Masalan: Aliyev Vali)" class="w-full border rounded-xl px-3 py-2 text-sm" />
-      <input id="newTLogin" type="text" placeholder="Login (Masalan: aliyev_v)" class="w-full border rounded-xl px-3 py-2 text-sm" />
-      <input id="newTPass" type="text" value="12345" placeholder="Parol" class="w-full border rounded-xl px-3 py-2 text-sm" />
+      <input id="newTName" type="text" placeholder="F.I.SH" class="w-full border rounded-xl px-3 py-2.5 text-sm" />
+      <input id="newTLogin" type="text" placeholder="Login" class="w-full border rounded-xl px-3 py-2.5 text-sm" />
+      <input id="newTPass" type="text" value="12345" placeholder="Parol" class="w-full border rounded-xl px-3 py-2.5 text-sm" />
       <div class="flex gap-2 pt-2">
-        <button onclick="document.getElementById('addTeacherModal').classList.add('hidden')" class="flex-1 py-2 bg-slate-100 rounded-xl text-xs font-bold">Bekor qilish</button>
-        <button onclick="saveNewTeacher()" class="flex-1 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold">Qo'shish</button>
+        <button onclick="document.getElementById('addTeacherModal').classList.add('hidden')" class="flex-1 py-2.5 bg-slate-100 rounded-xl text-xs font-bold">Bekor qilish</button>
+        <button onclick="saveNewTeacher()" class="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-bold">Qo'shish</button>
       </div>
     </div>
   </div>
 
-  <!-- FIREBASE VA ASOSIY DASTUR LOGIKASI -->
+  <!-- FIREBASE VA ASOSIY KOD -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, set, get, update, onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
@@ -465,7 +517,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // QO'NG'IROQLAR JADVALI (Katta tanaffus: 12:35 - 13:20)
     const BELL_SCHEDULE = [
       { hour: 1, start: "08:30", end: "09:15", wake: "08:25" },
       { hour: 2, start: "09:20", end: "10:05", wake: "09:15" },
@@ -479,7 +530,6 @@
 
     const DAYS_UZ = ["Dushanba", "Seshanba", "Chorshanba", "Payshanba", "Juma"];
 
-    // ICHKI O'RNATILGAN JSON BAZA (Alohida seed_data.json fayli kerak emas!)
     const INITIAL_SEED = [
       ["djurimbaev", "Djurımbaev Paraxat Alimbaevich", {"Dushanba": "|10-B|10-A|10-A|11-B|11-B|11-A|11-B", "Seshanba": "11-A|11-A|||10-B|10-B|10-A|", "Chorshanba": "11-A|11-A|10-A|10-A|11-B|11-B||11-B", "Payshanba": "11-B|11-A|11-A||10-B|10-B||", "Juma": "|10-B|10-B|10-A|10-A|11-B|11-B|11-B"}],
       ["sabirova", "Sabirova Gulistan Otarbaevna", {"Dushanba": "6-B|5-A|8-B|5-B|5-A|5-B||6-B", "Seshanba": "6-B|5-A|5-B|6-B|8-B|8-B||", "Chorshanba": "6-B|6-B|8-B|5-A|5-B|5-A|6-A|", "Payshanba": "5-A|6-B|5-A|5-B|5-B|8-B|6-B|", "Juma": "5-B|6-B|6-B|8-B|8-B||6-A|"}],
@@ -618,8 +668,10 @@
       onValue(ref(db, "teacher_att_v1/schedules"), snap => {
         schedulesData = snap.val() || {};
         if (currentUser) {
-          if (currentUser.role === "teacher") updateTeacherScheduleBanner();
-          else {
+          if (currentUser.role === "teacher") {
+            updateTeacherScheduleBanner();
+            evaluateTeacherAutoEngine();
+          } else {
             renderScheduleMatrix();
             renderLiveDashboard();
             renderAnalytics();
@@ -644,7 +696,7 @@
         const entries = Object.values(alerts);
         if (entries.length > 0 && currentUser && (currentUser.role === "admin" || currentUser.role === "creator")) {
           box.classList.remove("hidden");
-          list.innerHTML = entries.map(a => `<li>• <b>${a.name}</b> (${a.login}) — ${a.time} da 2-qurilmadan kirdi! (${a.device})</li>`).join("");
+          list.innerHTML = entries.map(a => `<li>• <b>${a.name}</b> (${a.login}) — ${a.time} da 2-qurilmadan kirdi!</li>`).join("");
         } else {
           box.classList.add("hidden");
         }
@@ -696,14 +748,28 @@
       errEl.classList.remove("hidden");
     });
 
+    // O'QITUVCHI PANELI VA AVTOMATIK BUDILNIK + RADAR TIZIMI
     function openTeacherPanel() {
       document.getElementById("loginView").classList.add("hidden");
       document.getElementById("adminView").classList.add("hidden");
       document.getElementById("teacherView").classList.remove("hidden");
       document.getElementById("tNameDisplay").textContent = currentUser.name;
+
+      // Ekranga birinchi tegishdayoq ovozsiz audio va WakeLock yoqiladi
+      startSilentAudioLoop();
+      document.body.addEventListener("touchstart", startSilentAudioLoop, { once: true });
+      document.body.addEventListener("click", startSilentAudioLoop, { once: true });
+
+      if ("Notification" in window && Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+
       updateTeacherScheduleBanner();
       flushOfflineLogsToFirebase();
-      checkAutoWakeWindow();
+      evaluateTeacherAutoEngine();
+      if (!trackingInterval) {
+        trackingInterval = setInterval(evaluateTeacherAutoEngine, 30000); // Har 30 soniyada budilnik va GPS ni tekshiradi
+      }
     }
 
     function getTeacherActiveWindow(login, dayName) {
@@ -737,9 +803,9 @@
       }
       const win = getTeacherActiveWindow(currentUser.login, todayDay);
       if (!win) {
-        box.innerHTML = `Bugun (<b>${todayDay}</b>) sizda dars soatlari yo'q.`;
+        box.innerHTML = `Bugun (<b>${todayDay}</b>) sizda dars jadvali bo'yicha dars yo'q.`;
       } else {
-        box.innerHTML = `Bugun (<b>${todayDay}</b>): Birinchi darsingiz <b>${win.firstHour}-soat (${win.startTime})</b> da, oxirgi darsingiz <b>${win.lastHour}-soat (${win.endTime})</b> da tugaydi.<br><span class="text-xs text-indigo-600 font-semibold">Faol nazorat oynasi: ${win.wakeTime} dan ${win.endTime} gacha.</span>`;
+        box.innerHTML = `Bugun (<b>${todayDay}</b>): 1-darsingiz <b>${win.firstHour}-soat (${win.startTime})</b>, oxirgisi <b>${win.lastHour}-soat (${win.endTime})</b>.<br><span class="text-indigo-600 font-bold">⏰ Avto-Budilnik: ${win.wakeTime} da ishga tushadi.</span>`;
       }
     }
 
@@ -772,40 +838,48 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     }
 
-    window.startTeacherAttendance = function () {
-      if (trackingActive) return;
-      startSilentAudioLoop();
-      if ("Notification" in window && Notification.permission === "default") {
-        Notification.requestPermission();
-      }
-
-      trackingActive = true;
-      const btn = document.getElementById("keldimBtn");
-      btn.classList.add("pulse-ring", "bg-indigo-600");
-      document.getElementById("keldimBtnText").textContent = "FAOL";
-
-      performMinutePing();
-      trackingInterval = setInterval(performMinutePing, 60000);
-    };
-
-    function performMinutePing() {
+    // AVTOMATIK BUDILNIK VA GPS BOSHQARUVCHISI (Tugmasiz ishlaydi)
+    let lastPingMinute = "";
+    function evaluateTeacherAutoEngine() {
       if (!currentUser || currentUser.role !== "teacher") return;
       const todayDay = getTodayUzDay();
       const nowHHMM = getNowHHMM();
+      const nowMin = timeToMin(nowHHMM);
+      const win = todayDay ? getTeacherActiveWindow(currentUser.login, todayDay) : null;
 
-      if (todayDay) {
-        const win = getTeacherActiveWindow(currentUser.login, todayDay);
-        if (win && timeToMin(nowHHMM) > timeToMin(win.endTime)) {
-          clearInterval(trackingInterval);
-          trackingActive = false;
-          document.getElementById("keldimBtnText").textContent = "TUGADI";
-          document.getElementById("tStatusText").textContent = "✅ Bugungi dars soatlaringiz yakunlandi. Rahmat!";
-          return;
+      // Agar dars vaqtigacha hali 5 daqiqadan ko'p vaqt bo'lsa -> Kutish (Budilnik) rejimida turadi, lekin hozirgi holatni ham bir marta ko'rsatadi
+      if (win && nowMin < timeToMin(win.wakeTime)) {
+        document.getElementById("radarIcon").textContent = "🌙";
+        document.getElementById("radarTitle").textContent = "KUTISH REJIMI";
+        document.getElementById("radarSub").textContent = `${win.wakeTime} da avto-yonadi`;
+        document.getElementById("tStatusText").innerHTML = `⏰ Darsingizga 5 daqiqa qolganda (<b>${win.wakeTime}</b> da) GPS avtomatik yonadi.`;
+        return;
+      }
+
+      if (win && nowMin > timeToMin(win.endTime)) {
+        document.getElementById("radarIcon").textContent = "✅";
+        document.getElementById("radarTitle").textContent = "TUGADI";
+        document.getElementById("radarSub").textContent = "Bugungi darslar yakunlandi";
+        document.getElementById("tStatusText").textContent = "✅ Bugungi dars soatlaringiz yakunlandi!";
+        return;
+      }
+
+      // Darsga 5 daqiqa qolgan paytda Push-bildirishnoma
+      if (win && nowHHMM === win.wakeTime && !trackingActive) {
+        trackingActive = true;
+        if ("Notification" in window && Notification.permission === "granted") {
+          new Notification("Smart Davomat", {
+            body: `🔔 Darsingiz boshlanishiga 5 daqiqa qoldi (${win.startTime}). Avto-nazorat ishga tushdi!`
+          });
         }
       }
 
+      // Har daqiqada 1 marta GPS tekshiruvi
+      if (nowHHMM === lastPingMinute) return;
+      lastPingMinute = nowHHMM;
+
       if (!navigator.geolocation) {
-        document.getElementById("tStatusText").textContent = "❌ Qurilmada GPS qo'llab-quvvatlanmaydi";
+        document.getElementById("tStatusText").textContent = "❌ Qurilmada GPS mavjud emas";
         return;
       }
 
@@ -818,15 +892,26 @@
             Number(geoSettings.lng)
           );
           const isInside = dist <= Number(geoSettings.radius) ? 1 : 0;
+          const circle = document.getElementById("radarCircle");
 
-          document.getElementById("tStatusText").innerHTML = isInside
-            ? `<span class="text-emerald-600 font-bold">🟢 Siz maktab hududidasiz (${nowHHMM})</span>`
-            : `<span class="text-red-600 font-bold">🔴 Maktab hududidan tashqaridasiz (${nowHHMM})</span>`;
+          if (isInside === 1) {
+            circle.className = "w-44 h-44 rounded-full bg-emerald-600 text-white mx-auto flex flex-col items-center justify-center p-4 shadow-2xl radar-ring transition";
+            document.getElementById("radarIcon").textContent = "🟢";
+            document.getElementById("radarTitle").textContent = "HUDUDDA";
+            document.getElementById("radarSub").textContent = `Yangilandi: ${nowHHMM}`;
+            document.getElementById("tStatusText").innerHTML = `<span class="text-emerald-600">🟢 Siz maktab hududidasiz (${nowHHMM})</span>`;
+          } else {
+            circle.className = "w-44 h-44 rounded-full bg-red-600 text-white mx-auto flex flex-col items-center justify-center p-4 shadow-2xl radar-ring transition";
+            document.getElementById("radarIcon").textContent = "🔴";
+            document.getElementById("radarTitle").textContent = "TASHQARIDA";
+            document.getElementById("radarSub").textContent = `Yangilandi: ${nowHHMM}`;
+            document.getElementById("tStatusText").innerHTML = `<span class="text-red-600">🔴 Maktab hududidan tashqaridasiz (${nowHHMM})</span>`;
+          }
 
           saveMinuteStatus(currentUser.login, nowHHMM, isInside);
         },
         () => {
-          document.getElementById("tStatusText").textContent = "⚠️ GPS ruxsatini yoqing!";
+          document.getElementById("tStatusText").textContent = "⚠️ Iltimos, telefonda GPS (Joylashuv) ruxsatini yoqing!";
         },
         { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
       );
@@ -867,30 +952,15 @@
     }
     window.addEventListener("online", flushOfflineLogsToFirebase);
 
-    function checkAutoWakeWindow() {
-      setInterval(() => {
-        if (!currentUser || currentUser.role !== "teacher") return;
-        const todayDay = getTodayUzDay();
-        if (!todayDay) return;
-        const win = getTeacherActiveWindow(currentUser.login, todayDay);
-        if (!win) return;
-        const now = getNowHHMM();
-        if (timeToMin(now) >= timeToMin(win.wakeTime) && timeToMin(now) <= timeToMin(win.endTime)) {
-          if (!trackingActive) {
-            if ("Notification" in window && Notification.permission === "granted") {
-              new Notification("Maktab Davomati", {
-                body: `Diqqat! Darsingiz boshlanishiga 5 daqiqa qoldi (${win.startTime}). Davomat avtomatik yoqildi.`
-              });
-            }
-            window.startTeacherAttendance();
-          }
-        }
-      }, 20000);
-    }
-
+    // TO'G'RILANGAN 3X FILTR: Maktabdan tashqarida bo'lsa DARHOL Tashqarida (0) deb ko'rsatadi!
     function applyThreeStrikeFilter(pingsObj) {
       const times = Object.keys(pingsObj || {}).sort();
-      let confirmedState = 1;
+      if (times.length === 0) {
+        return { currentConfirmed: null, filteredTimeline: {}, lastTime: "—" };
+      }
+
+      // Birinchi signal qanday bo'lsa (0 yoki 1), darhol o'shani oladi
+      let confirmedState = Number(pingsObj[times[0]]);
       let streakCount = 0;
       const filteredTimeline = {};
 
@@ -898,7 +968,7 @@
         const raw = Number(pingsObj[t]);
         if (raw !== confirmedState) {
           streakCount++;
-          if (streakCount >= 3) {
+          if (streakCount >= 3 || (confirmedState === 0 && raw === 1 && times.length < 3)) {
             confirmedState = raw;
             streakCount = 0;
           }
@@ -907,18 +977,25 @@
         }
         filteredTimeline[t] = confirmedState;
       }
-      return { currentConfirmed: times.length ? confirmedState : null, filteredTimeline, lastTime: times[times.length - 1] || "—" };
+      return {
+        currentConfirmed: confirmedState,
+        filteredTimeline,
+        lastTime: times[times.length - 1] || "—"
+      };
     }
 
+    // ADMIN VA CREATOR PANELINI OCHISH
     function openAdminPanel(role) {
       document.getElementById("loginView").classList.add("hidden");
       document.getElementById("teacherView").classList.add("hidden");
       document.getElementById("adminView").classList.remove("hidden");
-      document.getElementById("panelTitle").textContent = role === "creator" ? "Creator Super-Paneli" : "Admin Boshqaruv Paneli";
+      document.getElementById("panelTitle").textContent = role === "creator" ? "Creator Super-Paneli" : "Admin Paneli";
       if (role === "creator") {
-        document.getElementById("tab_creator").classList.remove("hidden");
+        document.getElementById("dtab_creator").classList.remove("hidden");
+        document.getElementById("mtab_creator").classList.remove("hidden");
       } else {
-        document.getElementById("tab_creator").classList.add("hidden");
+        document.getElementById("dtab_creator").classList.add("hidden");
+        document.getElementById("mtab_creator").classList.add("hidden");
       }
       document.getElementById("analyticsDate").value = getTodayDateStr();
       renderDayTabs();
@@ -931,55 +1008,64 @@
     window.switchTab = function (tab) {
       ["live", "analytics", "schedule", "staff", "geo", "creator"].forEach(t => {
         document.getElementById(`sec_${t}`).classList.add("hidden");
-        const btn = document.getElementById(`tab_${t}`);
-        if (btn && t !== "creator") {
-          btn.className = "tab-btn bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap";
-        }
+        const dbtn = document.getElementById(`dtab_${t}`);
+        if (dbtn && t !== "creator") dbtn.className = "bg-slate-800 text-slate-200 text-xs font-bold px-3 py-2 rounded-xl";
+        const mbtn = document.getElementById(`mtab_${t}`);
+        if (mbtn && t !== "creator") mbtn.className = "flex flex-col items-center justify-center py-1 px-2 rounded-xl text-slate-500 font-bold text-[10px]";
       });
       document.getElementById(`sec_${tab}`).classList.remove("hidden");
-      const activeBtn = document.getElementById(`tab_${tab}`);
-      if (activeBtn && tab !== "creator") {
-        activeBtn.className = "tab-btn bg-indigo-600 text-white text-xs font-bold px-3 py-2 rounded-lg whitespace-nowrap";
-      }
+      const activeD = document.getElementById(`dtab_${tab}`);
+      if (activeD && tab !== "creator") activeD.className = "bg-indigo-600 text-white text-xs font-bold px-3 py-2 rounded-xl";
+      const activeM = document.getElementById(`mtab_${tab}`);
+      if (activeM && tab !== "creator") activeM.className = "flex flex-col items-center justify-center py-1 px-2 rounded-xl text-indigo-600 font-extrabold text-[10px] bg-indigo-50";
     };
 
-    function renderLiveDashboard() {
+    // 1. JONLI NAZORAT (Mobil Kartochka + Noutbuk Jadval)
+    window.renderLiveDashboard = function () {
       const tbody = document.getElementById("liveTableBody");
-      if (!tbody) return;
+      const mCards = document.getElementById("liveMobileCards");
+      if (!tbody || !mCards) return;
+
+      const query = (document.getElementById("liveSearchInput")?.value || "").toLowerCase();
       const todayDay = getTodayUzDay() || "Dushanba";
       const nowMin = timeToMin(getNowHHMM());
 
       let bellInfo = "Darsdan tashqari vaqt";
       if (nowMin >= timeToMin("12:35") && nowMin < timeToMin("13:20")) {
-        bellInfo = "🍽️ Hozir Katta Tanaffus (Tushlik vaqti: 12:35 – 13:20)";
+        bellInfo = "🍽️ Katta Tanaffus (12:35–13:20)";
       } else {
         const curBell = BELL_SCHEDULE.find(b => nowMin >= timeToMin(b.start) && nowMin <= timeToMin(b.end));
-        if (curBell) bellInfo = `🔔 Hozir ${curBell.hour}-soat darsi (${curBell.start} – ${curBell.end})`;
+        if (curBell) bellInfo = `🔔 ${curBell.hour}-soat (${curBell.start}–${curBell.end})`;
       }
       document.getElementById("liveBellStatus").textContent = `${todayDay} | ${bellInfo}`;
 
       let countIn = 0, countOut = 0, countExc = 0;
-      const rows = Object.values(teachersData).map((t, idx) => {
+      const desktopRows = [];
+      const mobileCards = [];
+
+      Object.values(teachersData).forEach((t, idx) => {
         const win = getTeacherActiveWindow(t.login, todayDay);
         const att = attendanceLogsToday[t.login] || {};
         const excuse = att.excuse || null;
         const { currentConfirmed, lastTime } = applyThreeStrikeFilter(att.pings || {});
 
-        let statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-500">Hali kelmagan</span>`;
+        let statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-500">Signal yo'q</span>`;
         if (excuse) {
           countExc++;
-          statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800">🔵 Ruxsat: ${excuse}</span>`;
+          statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-blue-100 text-blue-800">🔵 ${excuse}</span>`;
         } else if (currentConfirmed === 1) {
           countIn++;
-          statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">🟢 Maktab hududida</span>`;
+          statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-100 text-emerald-800">🟢 Hududda</span>`;
         } else if (currentConfirmed === 0) {
           countOut++;
-          statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-red-800">🔴 Hududdan tashqarida</span>`;
+          statusBadge = `<span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-100 text-red-800">🔴 Tashqarida</span>`;
         }
 
-        const winText = win ? `${win.firstHour}-soatdan ${win.lastHour}-soatgacha (${win.wakeTime}–${win.endTime})` : "Bugun darsi yo'q";
+        if (query && !t.name.toLowerCase().includes(query) && !t.login.toLowerCase().includes(query)) return;
 
-        return `
+        const winText = win ? `${win.firstHour}–${win.lastHour} soat (${win.wakeTime}–${win.endTime})` : "Bugun darsi yo'q";
+
+        desktopRows.push(`
           <tr class="hover:bg-slate-50">
             <td class="p-3 font-semibold text-slate-400">${idx + 1}</td>
             <td class="p-3 font-bold text-slate-800">${t.name}</td>
@@ -987,32 +1073,44 @@
             <td class="p-3">${statusBadge}</td>
             <td class="p-3 text-xs font-mono text-slate-500">${lastTime}</td>
             <td class="p-3 text-right">
-              <button onclick="openExcuseModal('${t.login}', '${t.name.replace(/'/g, "")}')" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs px-3 py-1.5 rounded-lg">
-                Ruxsat berish
+              <button onclick="openExcuseModal('${t.login}', '${t.name.replace(/'/g, "")}')" class="bg-indigo-50 text-indigo-700 font-bold text-xs px-3 py-1.5 rounded-xl">
+                Ruxsat
               </button>
             </td>
           </tr>
-        `;
+        `);
+
+        mobileCards.push(`
+          <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between gap-2">
+            <div class="space-y-1">
+              <p class="font-bold text-slate-900 text-sm leading-snug">${t.name}</p>
+              <p class="text-[11px] text-slate-500">⏰ ${winText} • So'nggi: <b>${lastTime}</b></p>
+              <div>${statusBadge}</div>
+            </div>
+            <button onclick="openExcuseModal('${t.login}', '${t.name.replace(/'/g, "")}')" class="bg-indigo-50 active:bg-indigo-100 text-indigo-700 font-bold text-xs px-3 py-2.5 rounded-xl shrink-0">
+              Ruxsat
+            </button>
+          </div>
+        `);
       });
 
-      tbody.innerHTML = rows.join("");
+      tbody.innerHTML = desktopRows.join("");
+      mCards.innerHTML = mobileCards.join("");
       document.getElementById("statIn").textContent = countIn;
       document.getElementById("statOut").textContent = countOut;
       document.getElementById("statExcused").textContent = countExc;
-    }
+    };
 
     window.openExcuseModal = function (login, name) {
       selectedExcuseLogin = login;
-      document.getElementById("excuseTeacherName").textContent = `${name} (${getTodayDateStr()} uchun)`;
+      document.getElementById("excuseTeacherName").textContent = `${name} (${getTodayDateStr()})`;
       document.getElementById("customExcuseInput").value = "";
       document.getElementById("excuseModal").classList.remove("hidden");
     };
 
     window.applyExcuse = async function (reason) {
       if (!selectedExcuseLogin) return;
-      await update(ref(db, `teacher_att_v1/attendance/${getTodayDateStr()}/${selectedExcuseLogin}`), {
-        excuse: reason
-      });
+      await update(ref(db, `teacher_att_v1/attendance/${getTodayDateStr()}/${selectedExcuseLogin}`), { excuse: reason });
       document.getElementById("excuseModal").classList.add("hidden");
     };
 
@@ -1022,6 +1120,7 @@
       document.getElementById("excuseModal").classList.add("hidden");
     };
 
+    // 2. DARS TAHLILI (Mobil Kartochka + Noutbuk Jadval)
     window.renderAnalytics = async function () {
       const dateStr = document.getElementById("analyticsDate").value || getTodayDateStr();
       const dObj = new Date(dateStr);
@@ -1031,8 +1130,12 @@
       const snap = await get(ref(db, `teacher_att_v1/attendance/${dateStr}`));
       const dayLogs = snap.val() || {};
       const tbody = document.getElementById("analyticsTableBody");
+      const mCards = document.getElementById("analyticsMobileCards");
 
-      const htmlRows = Object.values(teachersData).map(t => {
+      const desktopRows = [];
+      const mobileCards = [];
+
+      Object.values(teachersData).forEach(t => {
         const sched = schedulesData[t.login]?.[dayName] || {};
         const tLog = dayLogs[t.login] || {};
         const excuse = tLog.excuse || null;
@@ -1047,7 +1150,7 @@
           planned++;
 
           if (excuse) {
-            details.push(`<span class="inline-block bg-blue-100 text-blue-800 px-2 py-0.5 rounded mr-1 mb-1">${h}-s (${cls}): Ruxsat (${excuse})</span>`);
+            details.push(`<span class="inline-block bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-[11px] mr-1 mb-1">${h}-s (${cls}): ${excuse}</span>`);
             continue;
           }
 
@@ -1055,8 +1158,7 @@
           const sMin = timeToMin(bell.start);
           const eMin = timeToMin(bell.end);
 
-          let outMins = 0;
-          let recordedMins = 0;
+          let outMins = 0, recordedMins = 0;
           for (let m = sMin; m < eMin; m++) {
             const hhmm = String(Math.floor(m / 60)).padStart(2, "0") + ":" + String(m % 60).padStart(2, "0");
             if (hhmm in filteredTimeline) {
@@ -1065,40 +1167,52 @@
             }
           }
 
-          if (recordedMins === 0) {
+          if (recordedMins === 0 || outMins >= 40) {
             fullMissed++;
-            details.push(`<span class="inline-block bg-red-100 text-red-800 px-2 py-0.5 rounded mr-1 mb-1">${h}-s (${cls}): To'liq qoldirdi (45 daq)</span>`);
-          } else if (outMins >= 40) {
-            fullMissed++;
-            details.push(`<span class="inline-block bg-red-100 text-red-800 px-2 py-0.5 rounded mr-1 mb-1">${h}-s (${cls}): Tashqarida (45 daq)</span>`);
+            details.push(`<span class="inline-block bg-red-100 text-red-800 px-2 py-0.5 rounded text-[11px] mr-1 mb-1">${h}-s (${cls}): Qoldirdi (45 daq)</span>`);
           } else if (outMins > 0) {
             partialMissedMins += outMins;
-            details.push(`<span class="inline-block bg-amber-100 text-amber-800 px-2 py-0.5 rounded mr-1 mb-1">${h}-s (${cls}): ${outMins} daq tashqarida</span>`);
+            details.push(`<span class="inline-block bg-amber-100 text-amber-800 px-2 py-0.5 rounded text-[11px] mr-1 mb-1">${h}-s (${cls}): -${outMins} daq</span>`);
           } else {
             fullPassed++;
-            details.push(`<span class="inline-block bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded mr-1 mb-1">${h}-s (${cls}): To'liq o'tdi</span>`);
+            details.push(`<span class="inline-block bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[11px] mr-1 mb-1">${h}-s (${cls}): O'tdi</span>`);
           }
         }
 
-        return `
+        desktopRows.push(`
           <tr class="hover:bg-slate-50">
             <td class="p-3 font-bold text-slate-800">${t.name}</td>
-            <td class="p-3 text-center font-bold">${planned} soat</td>
-            <td class="p-3 text-center text-emerald-700 font-bold">${fullPassed} soat</td>
-            <td class="p-3 text-center text-red-600 font-bold">${fullMissed} soat</td>
-            <td class="p-3 text-center text-amber-700 font-bold">${partialMissedMins} daqiqa</td>
-            <td class="p-3 text-xs">${details.join("") || "<span class='text-slate-400'>Shu kuni darsi yo'q</span>"}</td>
+            <td class="p-3 text-center font-bold">${planned} s</td>
+            <td class="p-3 text-center text-emerald-700 font-bold">${fullPassed} s</td>
+            <td class="p-3 text-center text-red-600 font-bold">${fullMissed} s</td>
+            <td class="p-3 text-center text-amber-700 font-bold">${partialMissedMins} daq</td>
+            <td class="p-3 text-xs">${details.join("") || "<span class='text-slate-400'>Darsi yo'q</span>"}</td>
           </tr>
-        `;
+        `);
+
+        mobileCards.push(`
+          <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-200 space-y-2">
+            <p class="font-bold text-slate-900 text-sm">${t.name}</p>
+            <div class="grid grid-cols-4 gap-1 text-center text-[11px] font-bold">
+              <div class="bg-slate-100 p-1.5 rounded-lg">Reja: ${planned}s</div>
+              <div class="bg-emerald-50 text-emerald-700 p-1.5 rounded-lg">O'tdi: ${fullPassed}s</div>
+              <div class="bg-red-50 text-red-600 p-1.5 rounded-lg">Qoldi: ${fullMissed}s</div>
+              <div class="bg-amber-50 text-amber-700 p-1.5 rounded-lg">-${partialMissedMins} daq</div>
+            </div>
+            <div class="pt-1">${details.join("") || "<span class='text-xs text-slate-400'>Shu kuni darsi yo'q</span>"}</div>
+          </div>
+        `);
       });
 
-      tbody.innerHTML = htmlRows.join("");
+      tbody.innerHTML = desktopRows.join("");
+      mCards.innerHTML = mobileCards.join("");
     };
 
+    // 3. DARS JADVALI (Mobil 2x4 Grid + Noutbuk Matritsa)
     function renderDayTabs() {
       const container = document.getElementById("dayTabs");
       container.innerHTML = DAYS_UZ.map(d => `
-        <button onclick="selectScheduleDay('${d}')" class="px-4 py-2 rounded-xl font-bold text-xs ${selectedScheduleDay === d ? 'bg-indigo-600 text-white shadow' : 'bg-white text-slate-700 border border-slate-200'}">
+        <button onclick="selectScheduleDay('${d}')" class="px-4 py-2 rounded-xl font-bold text-xs shrink-0 ${selectedScheduleDay === d ? 'bg-indigo-600 text-white shadow' : 'bg-slate-100 text-slate-700'}">
           ${d}
         </button>
       `).join("");
@@ -1112,28 +1226,53 @@
 
     function renderScheduleMatrix() {
       const tbody = document.getElementById("scheduleMatrixBody");
-      if (!tbody) return;
-      const rows = Object.values(teachersData).map(t => {
+      const mCards = document.getElementById("scheduleMobileCards");
+      if (!tbody || !mCards) return;
+
+      const desktopRows = [];
+      const mobileCards = [];
+
+      Object.values(teachersData).forEach(t => {
         const dSched = schedulesData[t.login]?.[selectedScheduleDay] || {};
         let cells = "";
+        let mobileGrid = "";
+
         for (let h = 1; h <= 8; h++) {
           const val = dSched[h] || "";
           cells += `
             <td class="p-1.5 text-center">
               <input type="text" value="${val}" placeholder="—"
                 onchange="updateSingleCell('${t.login}', '${selectedScheduleDay}', ${h}, this.value)"
-                class="w-16 sm:w-20 text-center border border-slate-200 rounded-lg py-1.5 text-xs font-bold focus:ring-2 focus:ring-indigo-500 focus:outline-none ${val ? 'bg-indigo-50 text-indigo-900 border-indigo-200' : 'bg-white text-slate-400'}" />
+                class="w-16 text-center border border-slate-200 rounded-lg py-1.5 text-xs font-bold ${val ? 'bg-indigo-50 text-indigo-900 border-indigo-300' : 'bg-white text-slate-400'}" />
             </td>
           `;
+          mobileGrid += `
+            <div class="bg-slate-50 p-1.5 rounded-xl border border-slate-200 text-center">
+              <span class="block text-[10px] text-slate-400 font-bold mb-0.5">${h}-soat</span>
+              <input type="text" value="${val}" placeholder="—"
+                onchange="updateSingleCell('${t.login}', '${selectedScheduleDay}', ${h}, this.value)"
+                class="w-full text-center rounded-lg py-1 text-xs font-extrabold border ${val ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-600 border-slate-200'}" />
+            </div>
+          `;
         }
-        return `
+
+        desktopRows.push(`
           <tr class="hover:bg-slate-50">
             <td class="p-3 font-bold text-slate-800 sticky left-0 bg-white z-10 border-r">${t.name}</td>
             ${cells}
           </tr>
-        `;
+        `);
+
+        mobileCards.push(`
+          <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-200 space-y-2">
+            <p class="font-bold text-slate-800 text-sm">${t.name} <span class="text-xs text-indigo-600">(${selectedScheduleDay})</span></p>
+            <div class="grid grid-cols-4 gap-1.5">${mobileGrid}</div>
+          </div>
+        `);
       });
-      tbody.innerHTML = rows.join("");
+
+      tbody.innerHTML = desktopRows.join("");
+      mCards.innerHTML = mobileCards.join("");
     }
 
     window.updateSingleCell = async function (login, day, hour, val) {
@@ -1170,11 +1309,8 @@
           }
         });
 
-        await update(ref(db, "teacher_att_v1"), {
-          teachers: newTeachers,
-          schedules: newSchedules
-        });
-        alert("✅ Excel dars jadvali muvaffaqiyatli yuklandi!");
+        await update(ref(db, "teacher_att_v1"), { teachers: newTeachers, schedules: newSchedules });
+        alert("✅ Excel jadval muvaffaqiyatli yuklandi!");
       };
       reader.readAsArrayBuffer(file);
     };
@@ -1183,14 +1319,8 @@
       const out = [];
       Object.values(teachersData).forEach(t => {
         DAYS_UZ.forEach(day => {
-          const row = {
-            "Login": t.login,
-            "O'qituvchi F.I.SH": t.name,
-            "Kun": day
-          };
-          for (let h = 1; h <= 8; h++) {
-            row[`${h}-soat`] = schedulesData[t.login]?.[day]?.[h] || "";
-          }
+          const row = { "Login": t.login, "O'qituvchi F.I.SH": t.name, "Kun": day };
+          for (let h = 1; h <= 8; h++) row[`${h}-soat`] = schedulesData[t.login]?.[day]?.[h] || "";
           out.push(row);
         });
       });
@@ -1200,26 +1330,57 @@
       XLSX.writeFile(wb, "Oqituvchilar_Dars_Jadvali.xlsx");
     };
 
+    // 4. XODIMLAR (Mobil Kartochka + Noutbuk Jadval)
     function renderStaffTable() {
       const tbody = document.getElementById("staffTableBody");
-      if (!tbody) return;
-      tbody.innerHTML = Object.values(teachersData).map((t, idx) => `
-        <tr class="hover:bg-slate-50">
-          <td class="p-3 text-slate-400 font-semibold">${idx + 1}</td>
-          <td class="p-3 font-bold text-slate-800">${t.name}</td>
-          <td class="p-3 font-mono text-indigo-700 font-bold">${t.login}</td>
-          <td class="p-3">
-            <input type="text" value="${t.password}" onchange="adminUpdatePass('${t.login}', this.value)"
-              class="border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-mono font-bold bg-amber-50 text-slate-900 w-32" />
-          </td>
-          <td class="p-3 text-xs text-slate-500">
-            ${t.deviceId ? `<span class="text-emerald-700 font-semibold">📱 Bog'langan</span>` : `<span class="text-slate-400">Bog'lanmagan</span>`}
-          </td>
-          <td class="p-3 text-right space-x-2">
-            <button onclick="resetTeacherDevice('${t.login}')" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-2.5 py-1 rounded-lg">Qurilmani yangilash</button>
-          </td>
-        </tr>
-      `).join("");
+      const mCards = document.getElementById("staffMobileCards");
+      if (!tbody || !mCards) return;
+
+      const desktopRows = [];
+      const mobileCards = [];
+
+      Object.values(teachersData).forEach((t, idx) => {
+        desktopRows.push(`
+          <tr class="hover:bg-slate-50">
+            <td class="p-3 text-slate-400 font-semibold">${idx + 1}</td>
+            <td class="p-3 font-bold text-slate-800">${t.name}</td>
+            <td class="p-3 font-mono text-indigo-700 font-bold">${t.login}</td>
+            <td class="p-3">
+              <input type="text" value="${t.password}" onchange="adminUpdatePass('${t.login}', this.value)"
+                class="border border-slate-300 rounded-lg px-2.5 py-1 text-xs font-mono font-bold bg-amber-50 text-slate-900 w-32" />
+            </td>
+            <td class="p-3 text-xs">${t.deviceId ? "📱 Bog'langan" : "—"}</td>
+            <td class="p-3 text-right">
+              <button onclick="resetTeacherDevice('${t.login}')" class="text-xs bg-slate-100 px-2.5 py-1 rounded-lg font-semibold">Qurilmani yangilash</button>
+            </td>
+          </tr>
+        `);
+
+        mobileCards.push(`
+          <div class="bg-white p-3.5 rounded-2xl shadow-sm border border-slate-200 space-y-2">
+            <div class="flex items-center justify-between">
+              <p class="font-bold text-slate-900 text-sm">${t.name}</p>
+              <span class="text-[11px] font-bold ${t.deviceId ? 'text-emerald-600' : 'text-slate-400'}">${t.deviceId ? '📱 Qurilma faol' : 'Kirmagan'}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-xs">
+              <div class="bg-slate-50 p-2 rounded-xl border">
+                <span class="block text-[10px] text-slate-400">Login</span>
+                <b class="font-mono text-indigo-700">${t.login}</b>
+              </div>
+              <div class="bg-amber-50 p-2 rounded-xl border border-amber-200">
+                <span class="block text-[10px] text-amber-700">Joriy Parol</span>
+                <input type="text" value="${t.password}" onchange="adminUpdatePass('${t.login}', this.value)" class="w-full bg-transparent font-mono font-bold text-slate-900 focus:outline-none" />
+              </div>
+            </div>
+            <button onclick="resetTeacherDevice('${t.login}')" class="w-full py-2 bg-slate-100 rounded-xl text-xs font-bold text-slate-700">
+              🔄 Qurilma bog'lanishini tozalash
+            </button>
+          </div>
+        `);
+      });
+
+      tbody.innerHTML = desktopRows.join("");
+      mCards.innerHTML = mobileCards.join("");
     }
 
     window.adminUpdatePass = async function (login, newPass) {
@@ -1228,7 +1389,7 @@
 
     window.resetTeacherDevice = async function (login) {
       await update(ref(db, `teacher_att_v1/teachers/${login}`), { deviceId: "", deviceInfo: "" });
-      alert("Qurilma bog'lanishi tozalandi. O'qituvchi yangi telefondan kirishi mumkin.");
+      alert("Qurilma tozalandi!");
     };
 
     window.openAddTeacherModal = () => document.getElementById("addTeacherModal").classList.remove("hidden");
@@ -1268,22 +1429,16 @@
       const lng = parseFloat(document.getElementById("geoLng").value);
       const radius = parseInt(document.getElementById("geoRadius").value) || 120;
       await update(ref(db, "teacher_att_v1/settings/geo"), { lat, lng, radius });
-      alert("✅ Maktab hududi koordinatasi saqlandi!");
+      alert("✅ Maktab koordinatasi saqlandi!");
     };
 
     window.saveCreatorCredentials = async function () {
       const newCreds = {
-        admin: {
-          login: document.getElementById("crAdminLogin").value.trim(),
-          pass: document.getElementById("crAdminPass").value.trim()
-        },
-        creator: {
-          login: document.getElementById("crSelfLogin").value.trim(),
-          pass: document.getElementById("crSelfPass").value.trim()
-        }
+        admin: { login: document.getElementById("crAdminLogin").value.trim(), pass: document.getElementById("crAdminPass").value.trim() },
+        creator: { login: document.getElementById("crSelfLogin").value.trim(), pass: document.getElementById("crSelfPass").value.trim() }
       };
       await update(ref(db, "teacher_att_v1/settings/creds"), newCreds);
-      alert("✅ Admin va Creator parollari yangilandi!");
+      alert("✅ Saqlandi!");
     };
 
     window.clearDeviceAlerts = async function () {
@@ -1291,7 +1446,7 @@
     };
 
     window.exportAnalyticsExcel = function () {
-      const table = document.querySelector("#sec_analytics table");
+      const table = document.getElementById("analyticsTableEl");
       const wb = XLSX.utils.table_to_book(table, { sheet: "Tahlil" });
       XLSX.writeFile(wb, `Davomat_Tahlili_${document.getElementById("analyticsDate").value}.xlsx`);
     };
@@ -1306,7 +1461,6 @@
       if (el) el.textContent = getTodayDateStr() + " | " + getNowHHMM();
     }, 1000);
 
-    // PWA VA SERVICE WORKER AVTO-GENERATORI (Alohida sw.js kerak emas!)
     let deferredPrompt = null;
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     const isStandalone = window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone;
